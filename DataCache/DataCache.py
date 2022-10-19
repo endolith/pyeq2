@@ -76,7 +76,7 @@ class DataCache(object):
                 if index not in indexList:
                     indexList.append(index)
         indexList.sort()
-                    
+
         # now that we have all the locations (indices) of the data points in the reduced
         # data set, draw those points from the full data set and make our reduced data cache
         independentData = [[],[]]
@@ -111,7 +111,10 @@ class DataCache(object):
                 cacheItem = getattr(pyeq2.DataCache.DataCacheFunctions, s)(inCacheDictionary['IndependentData'], dataCacheFunction[1], inModel)
                 numpy.seterr(all= 'ignore')
                 if not numpy.all(numpy.isfinite(cacheItem)):
-                    raise Exception('Error creating data cache for cache function ' + s + '(): could not calculate value. This is usually caused by taking the the exponent of a large number.')
+                    raise Exception(
+                        f'Error creating data cache for cache function {s}(): could not calculate value. This is usually caused by taking the the exponent of a large number.'
+                    )
+
                 inCacheDictionary[dataCacheFunction[0]] = cacheItem
             returnCacheDataList.append(inCacheDictionary[dataCacheFunction[0]])
         return numpy.array(returnCacheDataList)
@@ -121,9 +124,11 @@ class DataCache(object):
         inModel.numberOfReducedDataPoints = len(inModel.GetCoefficientDesignators()) * 3 * inModel.GetDimensionality()
         # if the number of reduced data points is greater than
         # the number of all data points, use the "all data" cache
-        if inModel.numberOfReducedDataPoints > len(self.allDataCacheDictionary['DependentData']):
-            inModel.numberOfReducedDataPoints = len(self.allDataCacheDictionary['DependentData'])
-            
+        inModel.numberOfReducedDataPoints = min(
+            inModel.numberOfReducedDataPoints,
+            len(self.allDataCacheDictionary['DependentData']),
+        )
+
         # if the number of data points in the all data set is not ~1.5 times greater than the
         # number of data points in the reduced data set, just use the all data set directly
         if (1.5 * inModel.numberOfReducedDataPoints) >= len(self.allDataCacheDictionary['DependentData']):

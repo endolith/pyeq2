@@ -19,22 +19,20 @@ from . import IExtendedVersionHandler
 class ExtendedVersionHandler_LinearDecayAndOffset(IExtendedVersionHandler.IExtendedVersionHandler):
     
     def AssembleDisplayHTML(self, inModel):
-        x_or_xy = 'xy'
-        if inModel.GetDimensionality() == 2:
-            x_or_xy = 'x'
-            
+        x_or_xy = 'x' if inModel.GetDimensionality() == 2 else 'xy'
         if inModel.baseEquationHasGlobalMultiplierOrDivisor_UsedInExtendedVersions:
-            return inModel._HTML + '<br>' + inModel._leftSideHTML + ' = ' + inModel._leftSideHTML + ' / ' + x_or_xy + ' + Offset'
-        else:
-            try:
-                cd = inModel.GetCoefficientDesignators()
-                return inModel._HTML + '<br>' + inModel._leftSideHTML + ' = ' + inModel._leftSideHTML + ' / (' + cd[-2]+ ' * ' + x_or_xy + ') + Offset'
-            except:
-                return inModel._HTML + '<br>' + inModel._leftSideHTML + ' = ' + inModel._leftSideHTML + ' / (' + x_or_xy + ') + Offset'
+            return f'{inModel._HTML}<br>{inModel._leftSideHTML} = {inModel._leftSideHTML} / {x_or_xy} + Offset'
+
+        try:
+            cd = inModel.GetCoefficientDesignators()
+            return f'{inModel._HTML}<br>{inModel._leftSideHTML} = {inModel._leftSideHTML} / ({cd[-2]} * {x_or_xy}) + Offset'
+
+        except:
+            return f'{inModel._HTML}<br>{inModel._leftSideHTML} = {inModel._leftSideHTML} / ({x_or_xy}) + Offset'
 
 
     def AssembleDisplayName(self, inModel):
-        return inModel._baseName + ' With Linear Decay And Offset'
+        return f'{inModel._baseName} With Linear Decay And Offset'
 
 
     def AssembleSourceCodeName(self, inModel):
@@ -64,15 +62,11 @@ class ExtendedVersionHandler_LinearDecayAndOffset(IExtendedVersionHandler.IExten
 
 
     def AssembleOutputSourceCodeCPP(self, inModel):
-        x_or_xy = 'x_in * y_in'
-        if inModel.GetDimensionality() == 2:
-            x_or_xy = 'x_in'
-            
+        x_or_xy = 'x_in' if inModel.GetDimensionality() == 2 else 'x_in * y_in'
         if inModel.baseEquationHasGlobalMultiplierOrDivisor_UsedInExtendedVersions:
             return inModel.SpecificCodeCPP() + "\ttemp = temp / (" + x_or_xy + ") + Offset;\n"
-        else:
-            cd = inModel.GetCoefficientDesignators()
-            return inModel.SpecificCodeCPP() + "\ttemp = temp / ("  + cd[-2] + ' * ' + x_or_xy + ") + Offset;\n"
+        cd = inModel.GetCoefficientDesignators()
+        return inModel.SpecificCodeCPP() + "\ttemp = temp / ("  + cd[-2] + ' * ' + x_or_xy + ") + Offset;\n"
         
 
     # overridden from abstract parent class
@@ -82,29 +76,38 @@ class ExtendedVersionHandler_LinearDecayAndOffset(IExtendedVersionHandler.IExten
             return True
         if inModel.dataCache.independentData2ContainsZeroFlag == True: # cannot divide by zero
             return True
-        
+
         if (inModel.independentData1CannotContainPositiveFlag == True) and (inModel.dataCache.independentData1ContainsPositiveFlag == True):
             return True
         if (inModel.independentData2CannotContainPositiveFlag == True) and (inModel.dataCache.independentData2ContainsPositiveFlag == True):
             return True
         if (inModel.independentData1CannotContainNegativeFlag == True) and (inModel.dataCache.independentData1ContainsNegativeFlag == True):
             return True
-        if (inModel.independentData2CannotContainNegativeFlag == True) and (inModel.dataCache.independentData2ContainsNegativeFlag == True):
-            return True
-        return False
+        return (
+            inModel.independentData2CannotContainNegativeFlag == True
+            and inModel.dataCache.independentData2ContainsNegativeFlag == True
+        )
 
 
     def GetAdditionalModelPredictions(self, inBaseModelCalculation, inCoeffs, inDataCacheDictionary, inModel):
         if inModel.GetDimensionality() == 2:
-            if inModel.baseEquationHasGlobalMultiplierOrDivisor_UsedInExtendedVersions:
-                return self.ConvertInfAndNanToLargeNumber(inBaseModelCalculation / inDataCacheDictionary['X'] + inCoeffs[len(inCoeffs)-1])
-            else:
-                return self.ConvertInfAndNanToLargeNumber(inBaseModelCalculation / (inCoeffs[len(inCoeffs)-2] * inDataCacheDictionary['X']) + inCoeffs[len(inCoeffs)-1])
+            return (
+                self.ConvertInfAndNanToLargeNumber(
+                    inBaseModelCalculation / inDataCacheDictionary['X']
+                    + inCoeffs[len(inCoeffs) - 1]
+                )
+                if inModel.baseEquationHasGlobalMultiplierOrDivisor_UsedInExtendedVersions
+                else self.ConvertInfAndNanToLargeNumber(
+                    inBaseModelCalculation
+                    / (inCoeffs[len(inCoeffs) - 2] * inDataCacheDictionary['X'])
+                    + inCoeffs[len(inCoeffs) - 1]
+                )
+            )
+
+        if inModel.baseEquationHasGlobalMultiplierOrDivisor_UsedInExtendedVersions:
+            return self.ConvertInfAndNanToLargeNumber(inBaseModelCalculation / inDataCacheDictionary['XY'] + inCoeffs[len(inCoeffs)-1])
         else:
-            if inModel.baseEquationHasGlobalMultiplierOrDivisor_UsedInExtendedVersions:
-                return self.ConvertInfAndNanToLargeNumber(inBaseModelCalculation / inDataCacheDictionary['XY'] + inCoeffs[len(inCoeffs)-1])
-            else:
-                return self.ConvertInfAndNanToLargeNumber(inBaseModelCalculation / (inCoeffs[len(inCoeffs)-2] * inDataCacheDictionary['XY']) + inCoeffs[len(inCoeffs)-1])
+            return self.ConvertInfAndNanToLargeNumber(inBaseModelCalculation / (inCoeffs[len(inCoeffs)-2] * inDataCacheDictionary['XY']) + inCoeffs[len(inCoeffs)-1])
     
     
 

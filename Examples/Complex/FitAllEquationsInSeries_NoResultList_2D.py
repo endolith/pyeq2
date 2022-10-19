@@ -6,12 +6,12 @@ from __future__ import generators
 import os, sys, inspect, copy
 
 # ensure pyeq2 can be imported
-if -1 != sys.path[0].find('pyeq2-master'):raise Exception('Please rename git checkout directory from "pyeq2-master" to "pyeq2"')
+if sys.path[0].find('pyeq2-master') != -1:raise Exception('Please rename git checkout directory from "pyeq2-master" to "pyeq2"')
 exampleFileDirectory = sys.path[0][:sys.path[0].rfind(os.sep)]
 pyeq2IimportDirectory =  os.path.join(os.path.join(exampleFileDirectory, '..'), '..')
 if pyeq2IimportDirectory not in sys.path:
     sys.path.append(pyeq2IimportDirectory)
-    
+
 import pyeq2
 
 
@@ -19,9 +19,7 @@ import pyeq2
 def ResultListSortFunction(a, b): # utility function
     if a[3] < b[3]:
         return -1
-    if a[3] > b[3]:
-        return 1
-    return 0
+    return 1 if a[3] > b[3] else 0
 
 def UniqueCombinations(items, n): # utility function
     if n==0:
@@ -53,14 +51,22 @@ def SetParametersAndFit(inEquation, inBestResult, inPrintStatus): # utility func
 
         if inPrintStatus:
             print('Fitting', inEquation.__module__, "'" + inEquation.GetDisplayName() + "'")
-        
+
         inEquation.Solve()
-        
+
         target = inEquation.CalculateAllDataFittingTarget(inEquation.solvedCoefficients)
         if target > 1.0E290: # error too large
             return
     except:
-        print("Exception in " + inEquation.__class__.__name__ + '\n' + str(sys.exc_info()[0]) + '\n' + str(sys.exc_info()[1]) + '\n')
+        print(
+            f"Exception in {inEquation.__class__.__name__}"
+            + '\n'
+            + str(sys.exc_info()[0])
+            + '\n'
+            + str(sys.exc_info()[1])
+            + '\n'
+        )
+
         return None
 
     if (not inBestResult) or (target < inBestResult[3]):
@@ -73,7 +79,7 @@ def SetParametersAndFit(inEquation, inBestResult, inPrintStatus): # utility func
         t6 = copy.deepcopy(inEquation.xPolynomialOrder)
         t7 = copy.deepcopy(inEquation.rationalNumeratorFlags)
         t8 = copy.deepcopy(inEquation.rationalDenominatorFlags)
-    
+
         return [t0,t1,t2,t3,t4,t5,t6,t7,t8]
     return None
 

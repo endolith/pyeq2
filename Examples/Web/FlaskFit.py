@@ -1,12 +1,12 @@
 import os, sys, inspect
 
 # ensure pyeq2 can be imported
-if -1 != sys.path[0].find('pyeq2-master'):raise Exception('Please rename git checkout directory from "pyeq2-master" to "pyeq2"')
+if sys.path[0].find('pyeq2-master') != -1:raise Exception('Please rename git checkout directory from "pyeq2-master" to "pyeq2"')
 exampleFileDirectory = sys.path[0][:sys.path[0].rfind(os.sep)]
 pyeq2ImportDirectory =  os.path.join(os.path.join(exampleFileDirectory, '..'), '..')
 if pyeq2ImportDirectory not in sys.path:
     sys.path.append(pyeq2ImportDirectory)
-    
+
 import pyeq2, GraphUtils, TextUtils
 from flask import Flask
 from flask import request
@@ -134,12 +134,10 @@ Example 3D data for testing
 </td></tr></table>
 '''
 
-    # return HTML to Flask as a web page
-    s = '<html><body>'    
-    s += '<table><tr>'
-    s += '<td>' + htmlToReturn_2Dform + '</td>'
+    s = '<html><body>' + '<table><tr>'
+    s += f'<td>{htmlToReturn_2Dform}</td>'
     s += '<td> </td>'
-    s += '<td>' + htmlToReturn_3Dform + '</td>'
+    s += f'<td>{htmlToReturn_3Dform}</td>'
     s += '</tr></table>'
     s +='</body></html>'
 
@@ -153,21 +151,21 @@ def simplefitter_2D_NoFormDataValidation():
     formEquation = request.form['equation']
     formFittingTarget = request.form['target']
 
-    if formEquation == 'Linear':
-        equation = pyeq2.Models_2D.Polynomial.Linear(formFittingTarget)
-    elif formEquation == 'Quadratic':
-        equation = pyeq2.Models_2D.Polynomial.Quadratic(formFittingTarget)
-    elif formEquation == 'Cubic':
+    if formEquation == 'Cubic':
         equation = pyeq2.Models_2D.Polynomial.Cubic(formFittingTarget)
-    elif formEquation == 'WitchA':
-        equation = pyeq2.Models_2D.Miscellaneous.WitchOfAgnesiA(formFittingTarget)
-    elif formEquation == 'VanDeemter':
-        equation = pyeq2.Models_2D.Engineering.VanDeemterChromatography(formFittingTarget)
-    elif formEquation == 'GammaRayDegreesB':
-        equation = pyeq2.Models_2D.LegendrePolynomial.GammaRayAngularDistributionDegreesB(formFittingTarget)
     elif formEquation == 'ExponentialWithOffset':
         equation = pyeq2.Models_2D.Exponential.Exponential(formFittingTarget, 'Offset')
 
+    elif formEquation == 'GammaRayDegreesB':
+        equation = pyeq2.Models_2D.LegendrePolynomial.GammaRayAngularDistributionDegreesB(formFittingTarget)
+    elif formEquation == 'Linear':
+        equation = pyeq2.Models_2D.Polynomial.Linear(formFittingTarget)
+    elif formEquation == 'Quadratic':
+        equation = pyeq2.Models_2D.Polynomial.Quadratic(formFittingTarget)
+    elif formEquation == 'VanDeemter':
+        equation = pyeq2.Models_2D.Engineering.VanDeemterChromatography(formFittingTarget)
+    elif formEquation == 'WitchA':
+        equation = pyeq2.Models_2D.Miscellaneous.WitchOfAgnesiA(formFittingTarget)
     # the name of the data here is from the form
     # check for functions requiring non-zero nor non-negative data such as 1/x, etc.
     try:
@@ -179,7 +177,8 @@ def simplefitter_2D_NoFormDataValidation():
     coeffCount = len(equation.GetCoefficientDesignators())
     dataCount = len(equation.dataCache.allDataCacheDictionary['DependentData'])
     if coeffCount > dataCount:
-        return "This equation requires a minimum of " + repr(coeffCount) + " data points, you supplied " + repr(dataCount) + "."
+        return f"This equation requires a minimum of {repr(coeffCount)} data points, you supplied {repr(dataCount)}."
+
 
     equation.Solve()
     equation.CalculateModelErrors(equation.solvedCoefficients, equation.dataCache.allDataCacheDictionary)
@@ -204,16 +203,16 @@ def simplefitter_2D_NoFormDataValidation():
     absErrorPlotFilePath = "static/abs_error_2D.png" # simplefitter_2D
     title = "Absolute Error For An HTML FORM Model"
     GraphUtils.SaveAbsErrorScatterPlot(absErrorPlotFilePath, equation, title, yAxisLabel)
-    
+
     absErrorHistFilePath = "static/abs_error_hist_2D.png" # simplefitter_2D
     title = "Absolute Error"
     GraphUtils.SaveDataHistogram(absErrorHistFilePath, equation.modelAbsoluteError, title)
-    
+
     if equation.dataCache.DependentDataContainsZeroFlag != 1:
         percentErrorPlotFilePath = "static/per_error_2D.png" # simplefitter_2D
         title = "Percent Error For An HTML FORM Model"
         GraphUtils.SavePercentErrorScatterPlot(percentErrorPlotFilePath, equation, title, yAxisLabel)
-        
+
         perErrorHistFilePath = "static/per_error_hist_2D.png" # simplefitter_2D
         title = "Percent Error"
         GraphUtils.SaveDataHistogram(perErrorHistFilePath, equation.modelPercentError, title)
@@ -228,12 +227,12 @@ def simplefitter_2D_NoFormDataValidation():
     htmlToReturn +=  '<img src="' + graphFilePath + '"> <br>\n'
     htmlToReturn +=  '<img src="' + absErrorPlotFilePath + '"><br>\n'
     htmlToReturn +=  '<img src="' + absErrorHistFilePath + '"><br>\n'
-    
+
     if equation.dataCache.DependentDataContainsZeroFlag != 1:
         htmlToReturn +=  '<img src="' + percentErrorPlotFilePath + '"><br><br>\n'
         htmlToReturn +=  '<img src="' + perErrorHistFilePath + '"><br><br>\n'
 
-    return '<html><body>' + htmlToReturn + '</body></html>'
+    return f'<html><body>{htmlToReturn}</body></html>'
 
 
 
@@ -244,21 +243,21 @@ def simplefitter_3D_NoFormDataValidation():
     formEquation = request.form['equation']
     formFittingTarget = request.form['target']
 
-    if formEquation == 'Linear':
-        equation = pyeq2.Models_3D.Polynomial.Linear(formFittingTarget)
-    elif formEquation == 'FullQuadratic':
-        equation = pyeq2.Models_3D.Polynomial.FullQuadratic(formFittingTarget)
+    if formEquation == 'CustomPolynomialOne':
+        equation = pyeq2.Models_3D.Polynomial.UserSelectablePolynomial(formFittingTarget, "Default", 3, 1)
+
     elif formEquation == 'FullCubic':
         equation = pyeq2.Models_3D.Polynomial.FullCubic(formFittingTarget)
-    elif formEquation == 'MonkeySaddleA':
-        equation = pyeq2.Models_3D.Miscellaneous.MonkeySaddleA(formFittingTarget)
+    elif formEquation == 'FullQuadratic':
+        equation = pyeq2.Models_3D.Polynomial.FullQuadratic(formFittingTarget)
     elif formEquation == 'GaussianCurvatureOfWhitneysUmbrellaA':
         equation = pyeq2.Models_3D.Miscellaneous.GaussianCurvatureOfWhitneysUmbrellaA(formFittingTarget)
+    elif formEquation == 'Linear':
+        equation = pyeq2.Models_3D.Polynomial.Linear(formFittingTarget)
+    elif formEquation == 'MonkeySaddleA':
+        equation = pyeq2.Models_3D.Miscellaneous.MonkeySaddleA(formFittingTarget)
     elif formEquation == 'NIST_NelsonAutolog':
         equation = pyeq2.Models_3D.NIST.NIST_NelsonAutolog(formFittingTarget)
-    elif formEquation == 'CustomPolynomialOne': # X order 3, Y order 1 in this example - passed as integers
-        equation = pyeq2.Models_3D.Polynomial.UserSelectablePolynomial(formFittingTarget, "Default", 3, 1)
-    
     # the name of the data here is from the form
     # check for functions requiring non-zero nor non-negative data such as 1/x, etc.
     try:
@@ -270,7 +269,8 @@ def simplefitter_3D_NoFormDataValidation():
     coeffCount = len(equation.GetCoefficientDesignators())
     dataCount = len(equation.dataCache.allDataCacheDictionary['DependentData'])
     if coeffCount > dataCount:
-        return "This equation requires a minimum of " + repr(coeffCount) + " data points, you supplied " + repr(dataCount) + "."
+        return f"This equation requires a minimum of {repr(coeffCount)} data points, you supplied {repr(dataCount)}."
+
 
     equation.Solve()
     equation.CalculateModelErrors(equation.solvedCoefficients, equation.dataCache.allDataCacheDictionary)
@@ -309,7 +309,7 @@ def simplefitter_3D_NoFormDataValidation():
         perErrorPlotFilePath = "static/per_error_3D.png" # simplefitter_3D
         title = "Percent Error For An HTML FORM Model"
         GraphUtils.SavePercentErrorScatterPlot(perErrorPlotFilePath, equation, title, zAxisLabel)
-        
+
         perErrorHistFilePath = "static/per_error_hist_3D.png" # simplefitter_3D
         title = "Percent Error"
         GraphUtils.SaveDataHistogram(perErrorHistFilePath, equation.modelPercentError, title)
@@ -328,60 +328,62 @@ def simplefitter_3D_NoFormDataValidation():
         htmlToReturn +=  '<img src="' + perErrorPlotFilePath + '"><br><br>\n'
         htmlToReturn +=  '<img src="' + perErrorHistFilePath + '"><br><br>\n'
 
-    return '<html><body>' + htmlToReturn + '</body></html>'
+    return f'<html><body>{htmlToReturn}</body></html>'
 
 
 
 @app.route('/equationlist_2D', methods=['GET'])
 def equationlist_2D():
-    htmlToReturn = '' # build this as we progress
-
-    htmlToReturn += '<table border=1>'
-    
+    htmlToReturn = '' + '<table border=1>'
     for submodule in inspect.getmembers(pyeq2.Models_2D):
         if inspect.ismodule(submodule[1]):
             for equationClass in inspect.getmembers(submodule[1]):
                 if inspect.isclass(equationClass[1]):
                     for extendedVersionName in ['Default', 'Offset']:
-                        if (-1 != extendedVersionName.find('Offset')) and (equationClass[1].autoGenerateOffsetForm == False):
+                        if (
+                            extendedVersionName.find('Offset') != -1
+                            and equationClass[1].autoGenerateOffsetForm
+                            == False
+                        ):
                             continue
-    
+
                         equation = equationClass[1]('SSQABS', extendedVersionName)
                         htmlToReturn += '<tr>'
-                        htmlToReturn += '<td nowrap>2D ' + submodule[0] + '</td>'
-                        htmlToReturn += '<td nowrap>' + equation.GetDisplayName() + '</td>'
-                        htmlToReturn += '<td nowrap>' + equation.GetDisplayHTML() + '</td>'
+                        htmlToReturn += f'<td nowrap>2D {submodule[0]}</td>'
+                        htmlToReturn += f'<td nowrap>{equation.GetDisplayName()}</td>'
+                        htmlToReturn += f'<td nowrap>{equation.GetDisplayHTML()}</td>'
                         htmlToReturn += '</tr>'
-                        
+
     htmlToReturn += '</table>'
-                        
-    return '<html><body>' + htmlToReturn + '</body></html>'
+
+    return f'<html><body>{htmlToReturn}</body></html>'
 
 
 @app.route('/equationlist_3D', methods=['GET'])
 def equationlist_3D():
-    htmlToReturn = '' # build this as we progress
-    
-    htmlToReturn += '<table border=1>'
-    
+    htmlToReturn = '' + '<table border=1>'
     for submodule in inspect.getmembers(pyeq2.Models_3D):
         if inspect.ismodule(submodule[1]):
             for equationClass in inspect.getmembers(submodule[1]):
                 if inspect.isclass(equationClass[1]):
                     for extendedVersionName in ['Default', 'Offset']:
-                        if (-1 != extendedVersionName.find('Offset')) and (equationClass[1].autoGenerateOffsetForm == False):
+                        if (
+                            extendedVersionName.find('Offset') != -1
+                            and equationClass[1].autoGenerateOffsetForm
+                            == False
+                        ):
                             continue
-    
+
                         equation = equationClass[1]('SSQABS', extendedVersionName)
                         htmlToReturn += '<tr>'
-                        htmlToReturn += '<td nowrap>3D ' + submodule[0] + '</td>'
-                        htmlToReturn += '<td nowrap>' + equation.GetDisplayName() + '</td>'
-                        htmlToReturn += '<td nowrap>' + equation.GetDisplayHTML() + '</td>'
+                        htmlToReturn += f'<td nowrap>3D {submodule[0]}</td>'
+                        htmlToReturn += f'<td nowrap>{equation.GetDisplayName()}</td>'
+                        htmlToReturn += f'<td nowrap>{equation.GetDisplayHTML()}</td>'
                         htmlToReturn += '</tr>'
-                        
+
     htmlToReturn += '</table>'
 
-    return '<html><body>' + htmlToReturn + '</body></html>'
+    return f'<html><body>{htmlToReturn}</body></html>'
 
 
 if __name__ == '__main__':

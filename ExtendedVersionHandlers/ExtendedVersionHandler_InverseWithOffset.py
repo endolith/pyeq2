@@ -20,13 +20,14 @@ class ExtendedVersionHandler_InverseWithOffset(IExtendedVersionHandler.IExtended
     
     def AssembleDisplayHTML(self, inModel):
         if inModel.GetDimensionality() == 2:
-            return inModel._HTML + '<br>' + inModel._leftSideHTML + ' = x / ' + inModel._leftSideHTML + ' + Offset'
+            return f'{inModel._HTML}<br>{inModel._leftSideHTML} = x / {inModel._leftSideHTML} + Offset'
+
         else:
-            return inModel._HTML + '<br>' + inModel._leftSideHTML + ' = xy / (' + inModel._leftSideHTML + ' + Offset'
+            return f'{inModel._HTML}<br>{inModel._leftSideHTML} = xy / ({inModel._leftSideHTML} + Offset'
 
 
     def AssembleDisplayName(self, inModel):
-        return 'Inverse ' + inModel._baseName + ' With Offset'
+        return f'Inverse {inModel._baseName} With Offset'
 
 
     def AssembleSourceCodeName(self, inModel):

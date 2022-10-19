@@ -6,12 +6,12 @@ from __future__ import generators
 import os, sys, inspect, copy
 
 # ensure pyeq2 can be imported
-if -1 != sys.path[0].find('pyeq2-master'):raise Exception('Please rename git checkout directory from "pyeq2-master" to "pyeq2"')
+if sys.path[0].find('pyeq2-master') != -1:raise Exception('Please rename git checkout directory from "pyeq2-master" to "pyeq2"')
 exampleFileDirectory = sys.path[0][:sys.path[0].rfind(os.sep)]
 pyeq2IimportDirectory =  os.path.join(os.path.join(exampleFileDirectory, '..'), '..')
 if pyeq2IimportDirectory not in sys.path:
     sys.path.append(pyeq2IimportDirectory)
-    
+
 import pyeq2
 
 
@@ -38,14 +38,22 @@ def SetParametersAndFit(inEquation, resultList, inPrintStatus): # utility functi
 
         if inPrintStatus:
             print('Fitting', inEquation.__module__, "'" + inEquation.GetDisplayName() + "'")
-        
+
         inEquation.Solve()
-        
+
         target = inEquation.CalculateAllDataFittingTarget(inEquation.solvedCoefficients)
         if target > 1.0E290: # error too large
             return
     except:
-        print("Exception in " + inEquation.__class__.__name__ + '\n' + str(sys.exc_info()[0]) + '\n' + str(sys.exc_info()[1]) + '\n')
+        print(
+            f"Exception in {inEquation.__class__.__name__}"
+            + '\n'
+            + str(sys.exc_info()[0])
+            + '\n'
+            + str(sys.exc_info()[1])
+            + '\n'
+        )
+
         return
 
     t0 = copy.deepcopy(inEquation.__module__)
@@ -116,7 +124,7 @@ for submodule in inspect.getmembers(pyeq2.Models_3D):
     if inspect.ismodule(submodule[1]):
         for equationClass in inspect.getmembers(submodule[1]):
             if inspect.isclass(equationClass[1]):
-                
+
                 # special classes 
                 if equationClass[1].splineFlag or \
                    equationClass[1].userSelectablePolynomialFlag or \
@@ -125,24 +133,24 @@ for submodule in inspect.getmembers(pyeq2.Models_3D):
                    equationClass[1].userSelectableRationalFlag or \
                    equationClass[1].userDefinedFunctionFlag:
                     continue
-                
+
                 for extendedVersion in ['Default', 'Offset']:
-                    
+
                     if (extendedVersion == 'Offset') and (equationClass[1].autoGenerateOffsetForm == False):
                         continue
-                    
-                    
+
+
                     equationInstance = equationClass[1](fittingTargetText, extendedVersion)
-                    
+
                     if len(equationInstance.GetCoefficientDesignators()) > smoothnessControl:
                         continue
-                    
-                    
+
+
                     equationInstance.dataCache = externalCache # re-use the external cache
-                    
+
                     if equationInstance.dataCache.allDataCacheDictionary == {}:
                         pyeq2.dataConvertorService().ConvertAndSortColumnarASCII(rawData, equationInstance, False)
-                        
+
                     equationInstance.dataCache.CalculateNumberOfReducedDataPoints(equationInstance)
                     if reducedDataCache.has_key(equationInstance.numberOfReducedDataPoints):
                         equationInstance.dataCache.reducedDataCacheDictionary = reducedDataCache[equationInstance.numberOfReducedDataPoints]
@@ -150,7 +158,7 @@ for submodule in inspect.getmembers(pyeq2.Models_3D):
                         equationInstance.dataCache.reducedDataCacheDictionary = {}
 
                     SetParametersAndFit(equationInstance, resultList, True)
-                    
+
                     if not reducedDataCache.has_key(equationInstance.numberOfReducedDataPoints):
                         reducedDataCache[equationInstance.numberOfReducedDataPoints] = equationInstance.dataCache.reducedDataCacheDictionary
 
@@ -181,11 +189,41 @@ polynomialOrderY = bestResult[7]
 
 # now instantiate the "best fit" equation based on the name stored in the result list
 if polyfunctional3DFlags:
-    equation = eval(moduleName + "." + className + "('" + fittingTargetText + "', '" + extendedVersionHandlerName + "', " + str(polyfunctional3DFlags) + ")")
+    equation = eval(
+        f"{moduleName}.{className}"
+        + "('"
+        + fittingTargetText
+        + "', '"
+        + extendedVersionHandlerName
+        + "', "
+        + str(polyfunctional3DFlags)
+        + ")"
+    )
+
 elif polynomialOrderX != None:
-    equation = eval(moduleName + "." + className + "('" + fittingTargetText + "', '" + extendedVersionHandlerName + "', " + str(polynomialOrderX) + ", " + str(polynomialOrderY) + ")")
+    equation = eval(
+        f"{moduleName}.{className}"
+        + "('"
+        + fittingTargetText
+        + "', '"
+        + extendedVersionHandlerName
+        + "', "
+        + str(polynomialOrderX)
+        + ", "
+        + str(polynomialOrderY)
+        + ")"
+    )
+
 else:
-    equation = eval(moduleName + "." + className + "('" + fittingTargetText + "', '" + extendedVersionHandlerName + "')")
+    equation = eval(
+        f"{moduleName}.{className}"
+        + "('"
+        + fittingTargetText
+        + "', '"
+        + extendedVersionHandlerName
+        + "')"
+    )
+
 
 
 pyeq2.dataConvertorService().ConvertAndSortColumnarASCII(rawData, equation, False)
@@ -196,9 +234,14 @@ equation.CalculateModelErrors(equation.solvedCoefficients, equation.dataCache.al
 
 
 print()
-print('\"Best fit\" was', moduleName + "." + className)
+print('\"Best fit\" was', f"{moduleName}.{className}")
 
-print('Fitting target value', equation.fittingTarget + ":", equation.CalculateAllDataFittingTarget(equation.solvedCoefficients))
+print(
+    'Fitting target value',
+    f"{equation.fittingTarget}:",
+    equation.CalculateAllDataFittingTarget(equation.solvedCoefficients),
+)
+
 
 if polyfunctional3DFlags:
     print()
@@ -210,7 +253,10 @@ if polynomialOrderX != None:
     print()
 
 for i in range(len(equation.solvedCoefficients)):
-    print("Coefficient " + equation.GetCoefficientDesignators()[i] + ": " + str(equation.solvedCoefficients[i]))
+    print(
+        f"Coefficient {equation.GetCoefficientDesignators()[i]}: {str(equation.solvedCoefficients[i])}"
+    )
+
 print()
 for i in range(len(equation.dataCache.allDataCacheDictionary['DependentData'])):
     print('X:', equation.dataCache.allDataCacheDictionary['IndependentData'][0][i],)

@@ -50,14 +50,13 @@ class ScaledX_1Term(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a0 = inCoeffs[0]
         a1 = inCoeffs[1]
         b1 = inCoeffs[2]
@@ -72,9 +71,10 @@ class ScaledX_1Term(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a0;\n"
-        s += "\ttemp +=  a1 *sin(c1 * x_in) + b1 *cos(c1 * x_in);\n"
-        return s
+        return (
+            "\ttemp = a0;\n"
+            + "\ttemp +=  a1 *sin(c1 * x_in) + b1 *cos(c1 * x_in);\n"
+        )
 
 
 
@@ -103,8 +103,10 @@ class Standard_1Term(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.SinX(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.SinX(NameOrValueFlag=1), []]
+        ]
+
         functionList.append([pyeq2.DataCache.DataCacheFunctions.CosX(NameOrValueFlag=1), []])
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
@@ -112,7 +114,7 @@ class Standard_1Term(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         sinX = inDataCacheDictionary['SinX'] # only need to perform this dictionary look-up once
         cosX = inDataCacheDictionary['CosX'] # only need to perform this dictionary look-up once
-        
+
         a0 = inCoeffs[0]
         a1 = inCoeffs[1]
         b1 = inCoeffs[2]
@@ -126,9 +128,7 @@ class Standard_1Term(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a0;\n"
-        s += "\ttemp +=  a1*sin(x_in) + b1*cos(x_in);\n"
-        return s
+        return "\ttemp = a0;\n" + "\ttemp +=  a1*sin(x_in) + b1*cos(x_in);\n"
 
 
 
@@ -157,8 +157,10 @@ class Standard_2Term(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.SinX(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.SinX(NameOrValueFlag=1), []]
+        ]
+
         functionList.append([pyeq2.DataCache.DataCacheFunctions.CosX(NameOrValueFlag=1), []])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.SinMultX(NameOrValueFlag=1, args=[2.0]), [2.0]])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.CosMultX(NameOrValueFlag=1, args=[2.0]), [2.0]])
@@ -170,7 +172,7 @@ class Standard_2Term(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
         cosX = inDataCacheDictionary['CosX'] # only need to perform this dictionary look-up once
         sin2X = inDataCacheDictionary['SinMultX_2.0'] # only need to perform this dictionary look-up once
         cos2X = inDataCacheDictionary['CosMultX_2.0'] # only need to perform this dictionary look-up once
-        
+
         a0 = inCoeffs[0]
         a1 = inCoeffs[1]
         b1 = inCoeffs[2]
@@ -187,8 +189,7 @@ class Standard_2Term(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a0;\n"
-        s += "\ttemp +=  a1*sin(x_in) + b1*cos(x_in);\n"
+        s = "\ttemp = a0;\n" + "\ttemp +=  a1*sin(x_in) + b1*cos(x_in);\n"
         s += "\ttemp +=  a2*sin(2.0 * x_in) + b2*cos(2.0 * x_in);\n"
         return s
 
@@ -219,8 +220,10 @@ class Standard_3Term(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.SinX(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.SinX(NameOrValueFlag=1), []]
+        ]
+
         functionList.append([pyeq2.DataCache.DataCacheFunctions.CosX(NameOrValueFlag=1), []])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.SinMultX(NameOrValueFlag=1, args=[2.0]), [2.0]])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.CosMultX(NameOrValueFlag=1, args=[2.0]), [2.0]])
@@ -236,7 +239,7 @@ class Standard_3Term(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
         cos2X = inDataCacheDictionary['CosMultX_2.0'] # only need to perform this dictionary look-up once
         sin3X = inDataCacheDictionary['SinMultX_3.0'] # only need to perform this dictionary look-up once
         cos3X = inDataCacheDictionary['CosMultX_3.0'] # only need to perform this dictionary look-up once
-        
+
         a0 = inCoeffs[0]
         a1 = inCoeffs[1]
         b1 = inCoeffs[2]
@@ -256,8 +259,7 @@ class Standard_3Term(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a0;\n"
-        s += "\ttemp +=  a1*sin(x_in) + b1*cos(x_in);\n"
+        s = "\ttemp = a0;\n" + "\ttemp +=  a1*sin(x_in) + b1*cos(x_in);\n"
         s += "\ttemp +=  a2*sin(2.0 * x_in) + b2*cos(2.0 * x_in);\n"
         s += "\ttemp +=  a3*sin(3.0 * x_in) + b3*cos(3.0 * x_in);\n"
         return s
@@ -289,8 +291,10 @@ class Standard_4Term(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.SinX(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.SinX(NameOrValueFlag=1), []]
+        ]
+
         functionList.append([pyeq2.DataCache.DataCacheFunctions.CosX(NameOrValueFlag=1), []])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.SinMultX(NameOrValueFlag=1, args=[2.0]), [2.0]])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.CosMultX(NameOrValueFlag=1, args=[2.0]), [2.0]])
@@ -310,7 +314,7 @@ class Standard_4Term(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
         cos3X = inDataCacheDictionary['CosMultX_3.0'] # only need to perform this dictionary look-up once
         sin4X = inDataCacheDictionary['SinMultX_4.0'] # only need to perform this dictionary look-up once
         cos4X = inDataCacheDictionary['CosMultX_4.0'] # only need to perform this dictionary look-up once
-        
+
         a0 = inCoeffs[0]
         a1 = inCoeffs[1]
         b1 = inCoeffs[2]
@@ -333,8 +337,7 @@ class Standard_4Term(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a0;\n"
-        s += "\ttemp +=  a1*sin(x_in) + b1*cos(x_in);\n"
+        s = "\ttemp = a0;\n" + "\ttemp +=  a1*sin(x_in) + b1*cos(x_in);\n"
         s += "\ttemp +=  a2*sin(2.0 * x_in) + b2*cos(2.0 * x_in);\n"
         s += "\ttemp +=  a3*sin(3.0 * x_in) + b3*cos(3.0 * x_in);\n"
         s += "\ttemp +=  a4*sin(4.0 * x_in) + b4*cos(4.0 * x_in);\n"

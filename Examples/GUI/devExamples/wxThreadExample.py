@@ -51,11 +51,11 @@ class WorkerThread(threading.Thread):
         for i in range(10):
             
             # this example decodes the event data *type*, here a string
-            wx.PostEvent(self._notify_window, ResultEvent(str(i) + " of 10"))
-            
+            wx.PostEvent(self._notify_window, ResultEvent(f"{str(i)} of 10"))
+
             time.sleep(1.0)
             if self._want_abort:
-                
+
                 # this example decodes the event data *type*, here None
                 wx.PostEvent(self._notify_window, ResultEvent(None))
                 return
@@ -111,14 +111,14 @@ class MainFrame(wx.Frame):
     def OnResult(self, event):
         """Show Result status."""
         if type(event.data) == type(''): # I use string data for status updates
-            self.status.SetLabel('Intermediate Result: ' + event.data)
+            self.status.SetLabel(f'Intermediate Result: {event.data}')
         elif event.data is None:
             # Thread aborted (using our convention of None as event data)
             self.status.SetLabel('Computation aborted')
             self.worker = None # the worker thread was aborted, so it is done
         else:
             # Process final results here
-            self.status.SetLabel('Computation Completed, Result: %s' % event.data)
+            self.status.SetLabel(f'Computation Completed, Result: {event.data}')
             self.worker = None # the worker thread completed
 
 

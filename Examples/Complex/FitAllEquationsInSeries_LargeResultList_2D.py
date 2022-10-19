@@ -6,12 +6,12 @@ from __future__ import generators
 import os, sys, inspect, copy
 
 # ensure pyeq2 can be imported
-if -1 != sys.path[0].find('pyeq2-master'):raise Exception('Please rename git checkout directory from "pyeq2-master" to "pyeq2"')
+if sys.path[0].find('pyeq2-master') != -1:raise Exception('Please rename git checkout directory from "pyeq2-master" to "pyeq2"')
 exampleFileDirectory = sys.path[0][:sys.path[0].rfind(os.sep)]
 pyeq2IimportDirectory =  os.path.join(os.path.join(exampleFileDirectory, '..'), '..')
 if pyeq2IimportDirectory not in sys.path:
     sys.path.append(pyeq2IimportDirectory)
-    
+
 import pyeq2
 
 
@@ -46,14 +46,22 @@ def SetParametersAndFit(inEquation, resultList, inPrintStatus): # utility functi
 
         if inPrintStatus:
             print('Fitting', inEquation.__module__, "'" + inEquation.GetDisplayName() + "'")
-        
+
         inEquation.Solve()
-        
+
         target = inEquation.CalculateAllDataFittingTarget(inEquation.solvedCoefficients)
         if target > 1.0E290: # error too large
             return
     except:
-        print("Exception in " + inEquation.__class__.__name__ + '\n' + str(sys.exc_info()[0]) + '\n' + str(sys.exc_info()[1]) + '\n')
+        print(
+            f"Exception in {inEquation.__class__.__name__}"
+            + '\n'
+            + str(sys.exc_info()[0])
+            + '\n'
+            + str(sys.exc_info()[1])
+            + '\n'
+        )
+
         return None
 
     t0 = copy.deepcopy(inEquation.__module__)

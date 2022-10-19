@@ -56,14 +56,13 @@ class AsymptoticExponentialA(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
         
         
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
 
         try:
@@ -74,8 +73,7 @@ class AsymptoticExponentialA(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = 1.0 - pow(a, x_in);\n"
-        return s
+        return "\ttemp = 1.0 - pow(a, x_in);\n"
 
 
 
@@ -104,14 +102,13 @@ class AsymptoticExponentialA_Transform(pyeq2.Model_2D_BaseClass.Model_2D_BaseCla
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -124,8 +121,7 @@ class AsymptoticExponentialA_Transform(pyeq2.Model_2D_BaseClass.Model_2D_BaseCla
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = 1.0 - pow(a, b * x_in + c);\n"
-        return s
+        return "\ttemp = 1.0 - pow(a, b * x_in + c);\n"
 
 
 
@@ -154,14 +150,13 @@ class AsymptoticExponentialB(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
 
@@ -173,8 +168,7 @@ class AsymptoticExponentialB(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a * (1.0 - exp(b * x_in));\n"
-        return s
+        return "\ttemp = a * (1.0 - exp(b * x_in));\n"
 
 
 
@@ -203,14 +197,13 @@ class DoubleAsymptoticExponentialB(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -224,8 +217,7 @@ class DoubleAsymptoticExponentialB(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a * (1.0 - exp(b * x_in)) + c * (1.0 - exp(d * x_in));\n"
-        return s
+        return "\ttemp = a * (1.0 - exp(b * x_in)) + c * (1.0 - exp(d * x_in));\n"
 
 
 
@@ -254,14 +246,16 @@ class BrunoTorremansQuadrupleExponential(pyeq2.Model_2D_BaseClass.Model_2D_BaseC
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.NegX(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.NegX(NameOrValueFlag=1), []]
+        ]
+
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_NegX = inDataCacheDictionary['NegX'] # only need to perform this dictionary look-up once
-        
+
         R1 = inCoeffs[0]
         R2 = inCoeffs[1]
         R3 = inCoeffs[2]
@@ -280,8 +274,7 @@ class BrunoTorremansQuadrupleExponential(pyeq2.Model_2D_BaseClass.Model_2D_BaseC
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = Offset - R1*exp(-x_in/T1) - R2*exp(-x_in/T2) - R3*exp(-x_in/T3) - R4*exp(-x_in/T4);\n"
-        return s
+        return "\ttemp = Offset - R1*exp(-x_in/T1) - R2*exp(-x_in/T2) - R3*exp(-x_in/T3) - R4*exp(-x_in/T4);\n"
 
 
 
@@ -310,14 +303,13 @@ class DoubleExponential(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -331,8 +323,7 @@ class DoubleExponential(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a * exp(b*x_in) + c * exp(d*x_in);\n"
-        return s
+        return "\ttemp = a * exp(b*x_in) + c * exp(d*x_in);\n"
 
 
 
@@ -361,14 +352,13 @@ class Exponential(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
 
@@ -380,8 +370,7 @@ class Exponential(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a * exp(b*x_in);\n"
-        return s
+        return "\ttemp = a * exp(b*x_in);\n"
 
 
 
@@ -410,14 +399,13 @@ class Hocket_Sherby(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -431,8 +419,7 @@ class Hocket_Sherby(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = b - (b-a) * exp(-1.0 * c * pow(x_in, d));\n"
-        return s
+        return "\ttemp = b - (b-a) * exp(-1.0 * c * pow(x_in, d));\n"
 
 
 
@@ -461,8 +448,7 @@ class Hoerl(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         functionList.append([pyeq2.DataCache.DataCacheFunctions.ExpX(NameOrValueFlag=1), []])
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
@@ -470,7 +456,7 @@ class Hoerl(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
         x_ExpX = inDataCacheDictionary['ExpX'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
 
         try:
@@ -481,8 +467,7 @@ class Hoerl(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = pow(x_in, a) * exp(x_in);\n"
-        return s
+        return "\ttemp = pow(x_in, a) * exp(x_in);\n"
 
 
 
@@ -511,14 +496,13 @@ class Hoerl_Transform(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -531,8 +515,7 @@ class Hoerl_Transform(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = pow(b * x_in + c, a) * exp(b * x_in + c);\n"
-        return s
+        return "\ttemp = pow(b * x_in + c, a) * exp(b * x_in + c);\n"
 
 
 
@@ -561,14 +544,13 @@ class InvExponential(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
 
@@ -580,8 +562,7 @@ class InvExponential(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a * exp(b/x_in);\n"
-        return s
+        return "\ttemp = a * exp(b/x_in);\n"
 
 
 
@@ -610,14 +591,13 @@ class InvertedOffsetExponential(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -630,8 +610,7 @@ class InvertedOffsetExponential(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a * exp(b/(x_in+c));\n"
-        return s
+        return "\ttemp = a * exp(b/(x_in+c));\n"
 
 
 
@@ -660,14 +639,13 @@ class OffsetExponential(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -680,8 +658,7 @@ class OffsetExponential(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a * exp(b*x_in + c);\n"
-        return s
+        return "\ttemp = a * exp(b*x_in + c);\n"
 
 
 
@@ -710,14 +687,16 @@ class ScaledExponential(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.ExpX(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.ExpX(NameOrValueFlag=1), []]
+        ]
+
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_ExpX = inDataCacheDictionary['ExpX'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
 
         try:
@@ -728,8 +707,7 @@ class ScaledExponential(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a * exp(x_in);\n"
-        return s
+        return "\ttemp = a * exp(x_in);\n"
 
 
 
@@ -758,14 +736,13 @@ class ShiftedExponential(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
 
@@ -777,8 +754,7 @@ class ShiftedExponential(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a * exp(x_in + b);\n"
-        return s
+        return "\ttemp = a * exp(x_in + b);\n"
 
 
 
@@ -813,14 +789,13 @@ class SimpleExponential(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
         
         
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
 
         try:
@@ -831,8 +806,7 @@ class SimpleExponential(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = pow(a, x_in);\n"
-        return s
+        return "\ttemp = pow(a, x_in);\n"
 
 
 
@@ -861,14 +835,13 @@ class SteveBattisonExponentialA(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -882,8 +855,7 @@ class SteveBattisonExponentialA(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = exp((a + b * x_in) / (c + d * x_in));\n"
-        return s
+        return "\ttemp = exp((a + b * x_in) / (c + d * x_in));\n"
 
 
 
@@ -912,14 +884,13 @@ class SteveBattisonExponentialB(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -934,8 +905,7 @@ class SteveBattisonExponentialB(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a * exp((b + c * x_in) / (d + f * x_in));\n"
-        return s
+        return "\ttemp = a * exp((b + c * x_in) / (d + f * x_in));\n"
 
 
 
@@ -964,14 +934,13 @@ class Stirling(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
 
@@ -983,8 +952,7 @@ class Stirling(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a * (exp(b*x_in) - 1.0) / b;\n"
-        return s
+        return "\ttemp = a * (exp(b*x_in) - 1.0) / b;\n"
 
 
 
@@ -1013,14 +981,13 @@ class TripleExponential(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -1036,8 +1003,7 @@ class TripleExponential(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a * exp(b*x_in) + c * exp(d*x_in) + f * exp(g*x_in);\n"
-        return s
+        return "\ttemp = a * exp(b*x_in) + c * exp(d*x_in) + f * exp(g*x_in);\n"
 
 
 
@@ -1066,8 +1032,7 @@ class VaporPressure(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LogX(NameOrValueFlag=1), []])
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
@@ -1075,7 +1040,7 @@ class VaporPressure(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
         x_LogX = inDataCacheDictionary['LogX'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -1088,8 +1053,7 @@ class VaporPressure(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = exp(a + (b/x_in) + c*log(x_in));\n"
-        return s
+        return "\ttemp = exp(a + (b/x_in) + c*log(x_in));\n"
 
 
 
@@ -1118,14 +1082,13 @@ class JonathanLitzCustomExponential(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass)
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -1139,8 +1102,7 @@ class JonathanLitzCustomExponential(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass)
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a + b * x_in + c * exp(-d * x_in) - c * x_in * exp(-d * x_in);\n"
-        return s
+        return "\ttemp = a + b * x_in + c * exp(-d * x_in) - c * x_in * exp(-d * x_in);\n"
 
 
 

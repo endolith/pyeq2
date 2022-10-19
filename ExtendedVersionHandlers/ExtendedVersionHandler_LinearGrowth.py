@@ -19,22 +19,20 @@ from . import IExtendedVersionHandler
 class ExtendedVersionHandler_LinearGrowth(IExtendedVersionHandler.IExtendedVersionHandler):
     
     def AssembleDisplayHTML(self, inModel):
-        x_or_xy = 'xy'
-        if inModel.GetDimensionality() == 2:
-            x_or_xy = 'x'
-            
+        x_or_xy = 'x' if inModel.GetDimensionality() == 2 else 'xy'
         if inModel.baseEquationHasGlobalMultiplierOrDivisor_UsedInExtendedVersions:
-            return inModel._HTML + '<br>' + inModel._leftSideHTML + ' = ' + inModel._leftSideHTML + ' * ' + x_or_xy
-        else:
-            try:
-                cd = inModel.GetCoefficientDesignators()
-                return inModel._HTML + '<br>' + inModel._leftSideHTML + ' = ' + inModel._leftSideHTML + ' * (' + cd[-1] + ' * ' + x_or_xy + ')'
-            except:
-                return inModel._HTML + '<br>' + inModel._leftSideHTML + ' = ' + inModel._leftSideHTML + ' * (' + x_or_xy + ')'
+            return f'{inModel._HTML}<br>{inModel._leftSideHTML} = {inModel._leftSideHTML} * {x_or_xy}'
+
+        try:
+            cd = inModel.GetCoefficientDesignators()
+            return f'{inModel._HTML}<br>{inModel._leftSideHTML} = {inModel._leftSideHTML} * ({cd[-1]} * {x_or_xy})'
+
+        except:
+            return f'{inModel._HTML}<br>{inModel._leftSideHTML} = {inModel._leftSideHTML} * ({x_or_xy})'
 
 
     def AssembleDisplayName(self, inModel):
-        return inModel._baseName + ' With Linear Growth'
+        return f'{inModel._baseName} With Linear Growth'
 
 
     def AssembleSourceCodeName(self, inModel):
@@ -51,33 +49,34 @@ class ExtendedVersionHandler_LinearGrowth(IExtendedVersionHandler.IExtendedVersi
     def AppendAdditionalCoefficientBounds(self, inModel):
         if inModel.baseEquationHasGlobalMultiplierOrDivisor_UsedInExtendedVersions:
             return
-        else:
-            if inModel.upperCoefficientBounds != []:
-                inModel.upperCoefficientBounds.append(None)
-            if inModel.lowerCoefficientBounds != []:
-                inModel.lowerCoefficientBounds.append(None)
+        if inModel.upperCoefficientBounds != []:
+            inModel.upperCoefficientBounds.append(None)
+        if inModel.lowerCoefficientBounds != []:
+            inModel.lowerCoefficientBounds.append(None)
 
 
     def AssembleOutputSourceCodeCPP(self, inModel):
-        x_or_xy = 'x_in * y_in'
-        if inModel.GetDimensionality() == 2:
-            x_or_xy = 'x_in'
-            
+        x_or_xy = 'x_in' if inModel.GetDimensionality() == 2 else 'x_in * y_in'
         if inModel.baseEquationHasGlobalMultiplierOrDivisor_UsedInExtendedVersions:
             return inModel.SpecificCodeCPP() + "\ttemp = temp * (" + x_or_xy + ");\n"
-        else:
-            cd = inModel.GetCoefficientDesignators()
-            return inModel.SpecificCodeCPP() + "\ttemp = temp * ("  + cd[-1] + ' * ' + x_or_xy + ");\n"
+        cd = inModel.GetCoefficientDesignators()
+        return inModel.SpecificCodeCPP() + "\ttemp = temp * ("  + cd[-1] + ' * ' + x_or_xy + ");\n"
         
 
     def GetAdditionalModelPredictions(self, inBaseModelCalculation, inCoeffs, inDataCacheDictionary, inModel):
         if inModel.GetDimensionality() == 2:
-            if inModel.baseEquationHasGlobalMultiplierOrDivisor_UsedInExtendedVersions:
-                return self.ConvertInfAndNanToLargeNumber(inBaseModelCalculation * inDataCacheDictionary['X'])
-            else:
-                return self.ConvertInfAndNanToLargeNumber(inBaseModelCalculation * (inCoeffs[len(inCoeffs)-1] * inDataCacheDictionary['X']))
+            return (
+                self.ConvertInfAndNanToLargeNumber(
+                    inBaseModelCalculation * inDataCacheDictionary['X']
+                )
+                if inModel.baseEquationHasGlobalMultiplierOrDivisor_UsedInExtendedVersions
+                else self.ConvertInfAndNanToLargeNumber(
+                    inBaseModelCalculation
+                    * (inCoeffs[len(inCoeffs) - 1] * inDataCacheDictionary['X'])
+                )
+            )
+
+        if inModel.baseEquationHasGlobalMultiplierOrDivisor_UsedInExtendedVersions:
+            return self.ConvertInfAndNanToLargeNumber(inBaseModelCalculation * inDataCacheDictionary['XY'])
         else:
-            if inModel.baseEquationHasGlobalMultiplierOrDivisor_UsedInExtendedVersions:
-                return self.ConvertInfAndNanToLargeNumber(inBaseModelCalculation * inDataCacheDictionary['XY'])
-            else:
-                return self.ConvertInfAndNanToLargeNumber(inBaseModelCalculation * (inCoeffs[len(inCoeffs)-1] * inDataCacheDictionary['XY']))
+            return self.ConvertInfAndNanToLargeNumber(inBaseModelCalculation * (inCoeffs[len(inCoeffs)-1] * inDataCacheDictionary['XY']))

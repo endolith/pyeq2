@@ -5,11 +5,11 @@ from __future__ import absolute_import
 import os, sys, dispy
 
 # ensure pyeq2 can be imported
-if -1 != sys.path[0].find('pyeq2-master'):raise Exception('Please rename git checkout directory from "pyeq2-master" to "pyeq2"')
+if sys.path[0].find('pyeq2-master') != -1:raise Exception('Please rename git checkout directory from "pyeq2-master" to "pyeq2"')
 importDir =  os.path.join(os.path.join(sys.path[0][:sys.path[0].rfind(os.sep)], '..'), '..')
 if importDir not in sys.path:
     sys.path.append(importDir)
-    
+
 import pyeq2
 
 
@@ -20,11 +20,19 @@ def fitEquationUsingDispyCluster(inEquationString, inFittingTargetString, inExte
     # individual cluster nodes must be able to import pyeq2
     import pyeq2
 
-    exec('equation = ' + inEquationString +'("' + inFittingTargetString + '", "' + inExtendedVersionString + '")')
+    exec(
+        f'equation = {inEquationString}'
+        + '("'
+        + inFittingTargetString
+        + '", "'
+        + inExtendedVersionString
+        + '")'
+    )
+
     pyeq2.dataConvertorService().ConvertAndSortColumnarASCII(inTextData, equation, False)
     equation.Solve()
     fittedTarget = equation.CalculateAllDataFittingTarget(equation.solvedCoefficients)
-   
+
     # this result list allows easy sorting of multiple results later
     return [fittedTarget, inEquationString, equation.solvedCoefficients]
 
@@ -54,12 +62,12 @@ print()
 if job.exception: # can also use job.status
     print('Remote Exception in job!')
     print()
-    print(str(job.exception))
+    print(job.exception)
 else:
-    equationString = 'equation = ' + results[1] + '("' + fittingTargetString + '")'
+    equationString = f'equation = {results[1]}' + '("' + fittingTargetString + '")'
     exec(equationString)
     equation.solvedCoefficients = results[2]
     print('Success! Results from job:')
-    print('The equation ' + results[1])
-    print('yielded ' + fittingTargetString + ' of ' + str(results[0]))
-    print('with coefficients  ' + str(results[2]))
+    print(f'The equation {results[1]}')
+    print(f'yielded {fittingTargetString} of {str(results[0])}')
+    print(f'with coefficients  {str(results[2])}')

@@ -28,7 +28,7 @@ class PowerTerm(object):
     def __init__(self, variableName, codeName, powerString, logFlag):
         self.power = float(powerString)
         self.logFlag = logFlag
-        
+
         # data flags
         self.cannotAcceptDataWith_Zero = False
         self.cannotAcceptDataWith_Negative = False
@@ -44,20 +44,20 @@ class PowerTerm(object):
 
             # code
         if self.logFlag:
-            self.HTML = 'ln(' + variableName + ')<sup>' + powerString + '</sup>'
-            self.JAVA = 'Math.pow(Math.log(' + codeName + '), ' + powerString + ')'
-            self.CPP = 'pow(log(' + codeName + '), ' + powerString + ')'
-            self.CSHARP = 'Math.Pow(Math.Log(' + codeName + '), ' + powerString + ')'
-            self.PYTHON = 'math.pow(math.log(' + codeName + '), ' + powerString + ')'
-            self.SCILAB = '(log(' + codeName + ') ^ ' + powerString + ')'
+            self.HTML = f'ln({variableName})<sup>{powerString}</sup>'
+            self.JAVA = f'Math.pow(Math.log({codeName}), {powerString})'
+            self.CPP = f'pow(log({codeName}), {powerString})'
+            self.CSHARP = f'Math.Pow(Math.Log({codeName}), {powerString})'
+            self.PYTHON = f'math.pow(math.log({codeName}), {powerString})'
+            self.SCILAB = f'(log({codeName}) ^ {powerString})'
         else:
-            self.HTML = variableName + '<sup>' + powerString + '</sup>'
-            self.JAVA = 'Math.pow(' + codeName + ', ' + powerString + ')'
-            self.CPP = 'pow(' + codeName + ', ' + powerString + ')'
-            self.CSHARP = 'Math.Pow(' + codeName + ', ' + powerString + ')'
-            self.PYTHON = 'math.pow(' + codeName + ', ' + powerString + ')'
-            self.PYTHON = 'math.pow(' + codeName + ', ' + powerString + ')'
-            self.SCILAB = '(' + codeName + ' ^ ' + powerString + ')'
+            self.HTML = f'{variableName}<sup>{powerString}</sup>'
+            self.JAVA = f'Math.pow({codeName}, {powerString})'
+            self.CPP = f'pow({codeName}, {powerString})'
+            self.CSHARP = f'Math.Pow({codeName}, {powerString})'
+            self.PYTHON = f'math.pow({codeName}, {powerString})'
+            self.PYTHON = f'math.pow({codeName}, {powerString})'
+            self.SCILAB = f'({codeName} ^ {powerString})'
 
     def value(self, x):
         try:
@@ -94,12 +94,12 @@ class ArcTangent_Term(object):
     cannotAcceptDataWith_Positive = False
 
     def __init__(self, variableName, codeName):
-        self.HTML = 'atan(' + variableName + ')'
-        self.JAVA = 'Math.atan(' + codeName + ')'
-        self.CPP = 'atan(' + codeName + ')'
-        self.CSHARP = 'Math.Atan(' + codeName + ')'
-        self.PYTHON = 'math.atan(' + codeName + ')'
-        self.SCILAB = 'atan(' + codeName + ')'
+        self.HTML = f'atan({variableName})'
+        self.JAVA = f'Math.atan({codeName})'
+        self.CPP = f'atan({codeName})'
+        self.CSHARP = f'Math.Atan({codeName})'
+        self.PYTHON = f'math.atan({codeName})'
+        self.SCILAB = f'atan({codeName})'
 
     def value(self, x):
         try:
@@ -115,12 +115,12 @@ class HyperbolicCosine_Term(object):
     cannotAcceptDataWith_Positive = False
 
     def __init__(self, variableName, codeName):
-        self.HTML = 'cosh(' + variableName + ')'
-        self.JAVA = 'Math.cosh(' + codeName + ')'
-        self.CPP = 'cosh(' + codeName + ')'
-        self.CSHARP = 'Math.Cosh(' + codeName + ')'
-        self.PYTHON = 'math.cosh(' + codeName + ')'
-        self.SCILAB = 'cosh(' + codeName + ')'
+        self.HTML = f'cosh({variableName})'
+        self.JAVA = f'Math.cosh({codeName})'
+        self.CPP = f'cosh({codeName})'
+        self.CSHARP = f'Math.Cosh({codeName})'
+        self.PYTHON = f'math.cosh({codeName})'
+        self.SCILAB = f'cosh({codeName})'
 
     def value(self, x):
         try:
@@ -153,12 +153,12 @@ class HyperbolicSine_Term(object):
     cannotAcceptDataWith_Positive = False
 
     def __init__(self, variableName, codeName):
-        self.HTML = 'sinh(' + variableName + ')'
-        self.JAVA = 'Math.sinh(' + codeName + ')'
-        self.CPP = 'sinh(' + codeName + ')'
-        self.CSHARP = 'Math.Sinh(' + codeName + ')'
-        self.PYTHON = 'math.sinh(' + codeName + ')'
-        self.SCILAB = 'sinh(' + codeName + ')'
+        self.HTML = f'sinh({variableName})'
+        self.JAVA = f'Math.sinh({codeName})'
+        self.CPP = f'sinh({codeName})'
+        self.CSHARP = f'Math.Sinh({codeName})'
+        self.PYTHON = f'math.sinh({codeName})'
+        self.SCILAB = f'sinh({codeName})'
 
     def value(self, x):
         try:
@@ -174,12 +174,12 @@ class Exponential_VariableUnchanged_Term(object):
     cannotAcceptDataWith_Positive = False
 
     def __init__(self, variableName, codeName):
-        self.HTML = 'exp(' + variableName + ')'
-        self.JAVA = 'Math.exp(' + codeName + ')'
-        self.CPP = 'exp(' + codeName + ')'
-        self.CSHARP = 'Math.Exp(' + codeName + ')'
-        self.PYTHON = 'math.exp(' + codeName + ')'
-        self.SCILAB = 'exp(' + codeName + ')'
+        self.HTML = f'exp({variableName})'
+        self.JAVA = f'Math.exp({codeName})'
+        self.CPP = f'exp({codeName})'
+        self.CSHARP = f'Math.Exp({codeName})'
+        self.PYTHON = f'math.exp({codeName})'
+        self.SCILAB = f'exp({codeName})'
 
     def value(self, x):
         try:
@@ -195,12 +195,12 @@ class Exponential_VariableTimesNegativeOne_Term(object):
     cannotAcceptDataWith_Positive = False
 
     def __init__(self, variableName, codeName):
-        self.HTML = 'exp(-' + variableName + ')'
-        self.JAVA = 'Math.exp(-1.0 * ' + codeName + ')'
-        self.CPP = 'exp(-1.0 * ' + codeName + ')'
-        self.CSHARP = 'Math.Exp(-1.0 * ' + codeName + ')'
-        self.PYTHON = 'math.exp(-1.0 * ' + codeName + ')'
-        self.SCILAB = 'exp(-1.0 * ' + codeName + ')'
+        self.HTML = f'exp(-{variableName})'
+        self.JAVA = f'Math.exp(-1.0 * {codeName})'
+        self.CPP = f'exp(-1.0 * {codeName})'
+        self.CSHARP = f'Math.Exp(-1.0 * {codeName})'
+        self.PYTHON = f'math.exp(-1.0 * {codeName})'
+        self.SCILAB = f'exp(-1.0 * {codeName})'
 
     def value(self, x):
         try:
@@ -216,12 +216,12 @@ class Sine_Term(object):
     cannotAcceptDataWith_Positive = False
 
     def __init__(self, variableName, codeName):
-        self.HTML = 'sin(' + variableName + ')'
-        self.JAVA = 'Math.sin(' + codeName + ')'
-        self.CPP = 'sin(' + codeName + ')'
-        self.CSHARP = 'Math.Sin(' + codeName + ')'
-        self.PYTHON = 'math.sin(' + codeName + ')'
-        self.SCILAB = 'sin(' + codeName + ')'
+        self.HTML = f'sin({variableName})'
+        self.JAVA = f'Math.sin({codeName})'
+        self.CPP = f'sin({codeName})'
+        self.CSHARP = f'Math.Sin({codeName})'
+        self.PYTHON = f'math.sin({codeName})'
+        self.SCILAB = f'sin({codeName})'
 
     def value(self, x):
         try:
@@ -237,12 +237,12 @@ class Cosine_Term(object):
     cannotAcceptDataWith_Positive = False
 
     def __init__(self, variableName, codeName):
-        self.HTML = 'cos(' + variableName + ')'
-        self.JAVA = 'Math.cos(' + codeName + ')'
-        self.CPP = 'cos(' + codeName + ')'
-        self.CSHARP = 'Math.Cos(' + codeName + ')'
-        self.PYTHON = 'math.cos(' + codeName + ')'
-        self.SCILAB = 'cos(' + codeName + ')'
+        self.HTML = f'cos({variableName})'
+        self.JAVA = f'Math.cos({codeName})'
+        self.CPP = f'cos({codeName})'
+        self.CSHARP = f'Math.Cos({codeName})'
+        self.PYTHON = f'math.cos({codeName})'
+        self.SCILAB = f'cos({codeName})'
 
     def value(self, x):
         try:
@@ -258,13 +258,13 @@ class Tangent_Term(object):
     cannotAcceptDataWith_Positive = False
 
     def __init__(self, variableName, codeName):
-        self.HTML = 'tan(' + variableName + ')'
-        self.HTML = 'tan(' + variableName + ')'
-        self.JAVA = 'Math.tan(' + codeName + ')'
-        self.CPP = 'tan(' + codeName + ')'
-        self.CSHARP = 'Math.Tan(' + codeName + ')'
-        self.PYTHON = 'math.tan(' + codeName + ')'
-        self.SCILAB = 'tan(' + codeName + ')'
+        self.HTML = f'tan({variableName})'
+        self.HTML = f'tan({variableName})'
+        self.JAVA = f'Math.tan({codeName})'
+        self.CPP = f'tan({codeName})'
+        self.CSHARP = f'Math.Tan({codeName})'
+        self.PYTHON = f'math.tan({codeName})'
+        self.SCILAB = f'tan({codeName})'
 
     def value(self, x):
         try:
@@ -280,13 +280,13 @@ class HyperbolicTangent_Term(object):
     cannotAcceptDataWith_Positive = False
 
     def __init__(self, variableName, codeName):
-        self.HTML = 'tanh(' + variableName + ')'
-        self.HTML = 'tanh(' + variableName + ')'
-        self.JAVA = 'Math.tanh(' + codeName + ')'
-        self.CPP = 'tanh(' + codeName + ')'
-        self.CSHARP = 'Math.Tanh(' + codeName + ')'
-        self.PYTHON = 'math.tanh(' + codeName + ')'
-        self.SCILAB = 'tanh(' + codeName + ')'
+        self.HTML = f'tanh({variableName})'
+        self.HTML = f'tanh({variableName})'
+        self.JAVA = f'Math.tanh({codeName})'
+        self.CPP = f'tanh({codeName})'
+        self.CSHARP = f'Math.Tanh({codeName})'
+        self.PYTHON = f'math.tanh({codeName})'
+        self.SCILAB = f'tanh({codeName})'
 
     def value(self, x):
         try:
@@ -302,12 +302,12 @@ class Log_Term(object):
     cannotAcceptDataWith_Positive = False
 
     def __init__(self, variableName, codeName):
-        self.HTML = 'ln(' + variableName + ')'
-        self.JAVA = 'Math.log(' + codeName + ')'
-        self.CPP = 'log(' + codeName + ')'
-        self.CSHARP = 'Math.Log(' + codeName + ')'
-        self.PYTHON = 'math.log(' + codeName + ')'
-        self.SCILAB = 'log(' + codeName + ')'
+        self.HTML = f'ln({variableName})'
+        self.JAVA = f'Math.log({codeName})'
+        self.CPP = f'log({codeName})'
+        self.CSHARP = f'Math.Log({codeName})'
+        self.PYTHON = f'math.log({codeName})'
+        self.SCILAB = f'log({codeName})'
 
     def value(self, x):
         try:
@@ -319,10 +319,8 @@ class Log_Term(object):
 
 # the order of occurrence in this list is the order of display
 def GenerateListForPolyfunctionals_WithParameters(variableName, codeName, dimensionality):
-    termList = []
-    
-    termList.append(Offset_Term(variableName, codeName))
-    
+    termList = [Offset_Term(variableName, codeName)]
+
     termList.append(PowerTerm(variableName, codeName, powerString='0.5', logFlag=False))
     termList.append(VariableUnchanged_Term(variableName, codeName))
     termList.append(PowerTerm(variableName, codeName, powerString='1.5', logFlag=False))
@@ -330,19 +328,19 @@ def GenerateListForPolyfunctionals_WithParameters(variableName, codeName, dimens
     termList.append(PowerTerm(variableName, codeName, powerString='-0.5', logFlag=False))
     termList.append(PowerTerm(variableName, codeName, powerString='-1', logFlag=False))
     termList.append(PowerTerm(variableName, codeName, powerString='-2', logFlag=False))
-    
+
     termList.append(Log_Term(variableName, codeName))
     termList.append(PowerTerm(variableName, codeName, powerString='2', logFlag=True))
     termList.append(PowerTerm(variableName, codeName, powerString='-1', logFlag=True))
     termList.append(PowerTerm(variableName, codeName, powerString='-2', logFlag=True))
-    
+
     termList.append(Exponential_VariableUnchanged_Term(variableName, codeName))
     termList.append(Exponential_VariableTimesNegativeOne_Term(variableName, codeName))
-    
+
     termList.append(Sine_Term(variableName, codeName))
     termList.append(Cosine_Term(variableName, codeName))
     termList.append(Tangent_Term(variableName, codeName))
-    
+
     # 3D makes an overwhelmimg number of X and Y permutations, only add these for 2D
     if dimensionality == 2:
         termList.append(HyperbolicSine_Term(variableName, codeName))
@@ -367,16 +365,14 @@ def GenerateListForPolyfunctionals_3D_Y():
 
 # this list is small due to my available CPU, you can add more to be thorough
 def GenerateListForRationals_2D(variableName = 'x', codeName = 'x_in'):
-    termList = []
-    
-    termList.append(Offset_Term(variableName, codeName))
-    
+    termList = [Offset_Term(variableName, codeName)]
+
     termList.append(VariableUnchanged_Term(variableName, codeName))
     termList.append(PowerTerm(variableName, codeName, powerString='-1', logFlag=False))
-    
+
     termList.append(PowerTerm(variableName, codeName, powerString='2', logFlag=False))
     termList.append(PowerTerm(variableName, codeName, powerString='-2', logFlag=False))
-    
+
     termList.append(Log_Term(variableName, codeName))
     termList.append(PowerTerm(variableName, codeName, powerString='-1', logFlag=True))
 
@@ -387,10 +383,10 @@ def GenerateListForRationals_2D(variableName = 'x', codeName = 'x_in'):
 
 # the order of occurrence in this list is the order of display
 def GenerateListForCustomPolynomials_WithParameters(variableName, codeName):
-    termList = []
-    for i in range(-8, 9):
-        termList.append(PowerTerm(variableName, codeName, powerString=str(i), logFlag=False))
-    return termList
+    return [
+        PowerTerm(variableName, codeName, powerString=str(i), logFlag=False)
+        for i in range(-8, 9)
+    ]
 
 
 def GenerateListForCustomPolynomials_2D():

@@ -6,12 +6,12 @@ from __future__ import generators
 import os, sys, inspect, copy, multiprocessing, Queue
 
 # ensure pyeq2 can be imported
-if -1 != sys.path[0].find('pyeq2-master'):raise Exception('Please rename git checkout directory from "pyeq2-master" to "pyeq2"')
+if sys.path[0].find('pyeq2-master') != -1:raise Exception('Please rename git checkout directory from "pyeq2-master" to "pyeq2"')
 exampleFileDirectory = sys.path[0][:sys.path[0].rfind(os.sep)]
 pyeq2IimportDirectory =  os.path.join(os.path.join(exampleFileDirectory, '..'), '..')
 if pyeq2IimportDirectory not in sys.path:
     sys.path.append(pyeq2IimportDirectory)
-    
+
 import pyeq2
 
 
@@ -19,9 +19,7 @@ import pyeq2
 def ResultListSortFunction(a, b): # utility function
     if a[3] < b[3]:
         return -1
-    if a[3] > b[3]:
-        return 1
-    return 0
+    return 1 if a[3] > b[3] else 0
 
 def UniqueCombinations(items, n): # utility function
     if n==0:
@@ -49,13 +47,13 @@ def SetParametersAndFit(inEquation, inPrintStatus): # utility function
     inEquation.dataCache = globalDataCache
     if inEquation.dataCache.allDataCacheDictionary == {}:
         pyeq2.dataConvertorService().ConvertAndSortColumnarASCII(globalRawData, inEquation, False)
-        
+
     inEquation.dataCache.CalculateNumberOfReducedDataPoints(inEquation)
     if globalReducedDataCache.has_key(inEquation.numberOfReducedDataPoints):
         inEquation.dataCache.reducedDataCacheDictionary = globalReducedDataCache[inEquation.numberOfReducedDataPoints]
     else:
         inEquation.dataCache.reducedDataCacheDictionary = {}
- 
+
     try:
         # check for number of coefficients > number of data points to be fitted
         if len(inEquation.GetCoefficientDesignators()) > len(inEquation.dataCache.allDataCacheDictionary['DependentData']):
@@ -66,18 +64,33 @@ def SetParametersAndFit(inEquation, inPrintStatus): # utility function
             return None
 
         if inPrintStatus:
-            print('Process ID', str(os.getpid()), 'Fitting', inEquation.__module__, "'" + inEquation.GetDisplayName() + "'")
-        
+            print(
+                'Process ID',
+                os.getpid(),
+                'Fitting',
+                inEquation.__module__,
+                "'" + inEquation.GetDisplayName() + "'",
+            )
+
+
         inEquation.Solve()
 
         if not globalReducedDataCache.has_key(inEquation.numberOfReducedDataPoints):
             globalReducedDataCache[inEquation.numberOfReducedDataPoints] = inEquation.dataCache.reducedDataCacheDictionary
-        
+
         target = inEquation.CalculateAllDataFittingTarget(inEquation.solvedCoefficients)
         if target > 1.0E290: # error too large
             return None
     except:
-        print("Exception in " + inEquation.__class__.__name__ + '\n' + str(sys.exc_info()[0]) + '\n' + str(sys.exc_info()[1]) + '\n')
+        print(
+            f"Exception in {inEquation.__class__.__name__}"
+            + '\n'
+            + str(sys.exc_info()[0])
+            + '\n'
+            + str(sys.exc_info()[1])
+            + '\n'
+        )
+
         return None
 
     t0 = copy.deepcopy(inEquation.__module__)
@@ -232,7 +245,7 @@ def serialWorker(inputQueue, outputQueue):
 
 os.nice(10) ####################### I use this during development
 
-global globalDataCache 
+global globalDataCache
 globalDataCache = pyeq2.dataCache()
 
 global globalReducedDataCache
@@ -255,7 +268,7 @@ globalRawData = '''
 
 # Standard lowest sum-of-squared errors in this example, see IModel.fittingTargetDictionary
 fittingTargetText = 'SSQABS'
-    
+
 
 #####################################################
 # this value is used to make the example run faster #
@@ -280,10 +293,11 @@ fittingResultsQueue = Queue.Queue(0)
 numberOfSerialTasksSubmitted = SubmitTasksToQueue(fittingTasksQueue, fittingTargetText, smoothnessControl, True)
 if numberOfSerialTasksSubmitted > 0:
     serialWorker(fittingTasksQueue, fittingResultsQueue)
-    for i in range(numberOfSerialTasksSubmitted):
-        allResults.append(fittingResultsQueue.get())
+    allResults.extend(
+        fittingResultsQueue.get() for _ in range(numberOfSerialTasksSubmitted)
+    )
 
-print(str(numberOfSerialTasksSubmitted), 'total linear fits performed in series')
+print(numberOfSerialTasksSubmitted, 'total linear fits performed in series')
 
 ##############################################
 # Serial region ends
@@ -296,57 +310,66 @@ if __name__ ==  '__main__':
     ##############################################
     # Parallel region begins
     ##############################################
-    
+
     fittingTasksQueue = multiprocessing.Queue()
     fittingResultsQueue = multiprocessing.Queue()
-    
+
     # how many CPU cores are on this computer?
     number_of_cpu_cores = multiprocessing.cpu_count()
-    
+
     # submit nonlinear fitting tasks to the queue for parallel processing
     numberOfParallelTasksSubmitted = SubmitTasksToQueue(fittingTasksQueue, fittingTargetText, smoothnessControl, False)
-    
+
     if numberOfParallelTasksSubmitted > 0:
         processList = []
-        
+
         # run worker processes
         try:
-            for i in range(number_of_cpu_cores):
+            for _ in range(number_of_cpu_cores):
                 p = multiprocessing.Process(target=parallelWorker, args=(fittingTasksQueue, fittingResultsQueue))
                 p.start()
                 processList.append(p)
-        
+
             # gather all results from the process pool
             for i in range(numberOfParallelTasksSubmitted):
                 allResults.append(fittingResultsQueue.get())
                 if i%10 == 0 and i > 0:
                     print(i, 'non-linear fits performed in parallel')
-                
-        # terminate all worker processes
+
         finally:
             for p in processList:
                 try: # use try/except block for termination
                     p.terminate()
                 except:
                     pass
-    
-    print(str(numberOfParallelTasksSubmitted), 'total non-linear fits performed in parallel')
-    
+
+    print(
+        numberOfParallelTasksSubmitted,
+        'total non-linear fits performed in parallel',
+    )
+
+
     ##############################################
     # Parallel region ends
     ##############################################
-    
-    
-    
-    print('Completed fitting', str(numberOfSerialTasksSubmitted + numberOfParallelTasksSubmitted), 'equations.')
-    
+
+
+
+    print(
+        'Completed fitting',
+        numberOfSerialTasksSubmitted + numberOfParallelTasksSubmitted,
+        'equations.',
+    )
+
+
     # find the best result of all the parallel runs
     bestResult = []
     for result in allResults:
-        if result != None:
-            if (not bestResult) or (result[3] < bestResult[3]):
-                bestResult = result
-    
+        if result != None and (
+            (not bestResult) or (result[3] < bestResult[3])
+        ):
+            bestResult = result
+
     print()
     print()
     print('While \"Best Fit\" may be the lowest fitting target value,')
@@ -354,7 +377,7 @@ if __name__ ==  '__main__':
     print('for your needs.  For example, it may interpolate badly.')
     print()
     print('"Smoothness Control" allowed a maximum of ' + str(smoothnessControl) + ' parameters')
-    
+
     moduleName = bestResult[0]
     className = bestResult[1]
     extendedVersionHandlerName = bestResult[2]
@@ -364,31 +387,76 @@ if __name__ ==  '__main__':
     polynomialOrderX = bestResult[6]
     rationalNumeratorFlags = bestResult[7]
     rationalDenominatorFlags = bestResult[8]
-    
-    
+
+
     # now instantiate the "best fit" equation based on the name stored in the result list
     if polyfunctional2DFlags:
-        equation = eval(moduleName + "." + className + "('" + fittingTargetText + "', '" + extendedVersionHandlerName + "', " + str(polyfunctional2DFlags) + ")")
+        equation = eval(
+            f"{moduleName}.{className}"
+            + "('"
+            + fittingTargetText
+            + "', '"
+            + extendedVersionHandlerName
+            + "', "
+            + str(polyfunctional2DFlags)
+            + ")"
+        )
+
     elif polynomialOrderX != None:
-        equation = eval(moduleName + "." + className + "('" + fittingTargetText + "', '" + extendedVersionHandlerName + "', " + str(polynomialOrderX) + ")")
+        equation = eval(
+            f"{moduleName}.{className}"
+            + "('"
+            + fittingTargetText
+            + "', '"
+            + extendedVersionHandlerName
+            + "', "
+            + str(polynomialOrderX)
+            + ")"
+        )
+
     elif rationalNumeratorFlags and rationalDenominatorFlags:
-        equation = eval(moduleName + "." + className + "('" + fittingTargetText + "', '" + extendedVersionHandlerName + "', " + str(rationalNumeratorFlags) + ", " + str(rationalDenominatorFlags) + ")")
+        equation = eval(
+            f"{moduleName}.{className}"
+            + "('"
+            + fittingTargetText
+            + "', '"
+            + extendedVersionHandlerName
+            + "', "
+            + str(rationalNumeratorFlags)
+            + ", "
+            + str(rationalDenominatorFlags)
+            + ")"
+        )
+
     else:
-        equation = eval(moduleName + "." + className + "('" + fittingTargetText + "', '" + extendedVersionHandlerName + "')")
-    
-    
+        equation = eval(
+            f"{moduleName}.{className}"
+            + "('"
+            + fittingTargetText
+            + "', '"
+            + extendedVersionHandlerName
+            + "')"
+        )
+
+            
+
     pyeq2.dataConvertorService().ConvertAndSortColumnarASCII(globalRawData, equation, False)
     equation.fittingTarget = fittingTargetText
     equation.solvedCoefficients = solvedCoefficients
     equation.dataCache.FindOrCreateAllDataCache(equation)
     equation.CalculateModelErrors(equation.solvedCoefficients, equation.dataCache.allDataCacheDictionary)
-    
-    
+
+
     print()
-    print('\"Best fit\" was', moduleName + "." + className)
-    
-    print('Fitting target value', equation.fittingTarget + ":", equation.CalculateAllDataFittingTarget(equation.solvedCoefficients))
-    
+    print('\"Best fit\" was', f"{moduleName}.{className}")
+
+    print(
+        'Fitting target value',
+        f"{equation.fittingTarget}:",
+        equation.CalculateAllDataFittingTarget(equation.solvedCoefficients),
+    )
+
+
     if polyfunctional2DFlags:
         print()
         print('Polyfunctional flags:', polyfunctional2DFlags)
@@ -404,9 +472,12 @@ if __name__ ==  '__main__':
         if extendedVersionHandlerName == 'Offset':
             print('with offset')
         print()
-    
+
     for i in range(len(equation.solvedCoefficients)):
-        print("Coefficient " + equation.GetCoefficientDesignators()[i] + ": " + str(equation.solvedCoefficients[i]))
+        print(
+            f"Coefficient {equation.GetCoefficientDesignators()[i]}: {str(equation.solvedCoefficients[i])}"
+        )
+
     print()
     for i in range(len(equation.dataCache.allDataCacheDictionary['DependentData'])):
         print('X:', equation.dataCache.allDataCacheDictionary['IndependentData'][0][i],)

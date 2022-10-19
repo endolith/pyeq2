@@ -5,12 +5,12 @@ from __future__ import absolute_import
 import os, sys, inspect, dispy
 
 # ensure pyeq2 can be imported
-if -1 != sys.path[0].find('pyeq2-master'):raise Exception('Please rename git checkout directory from "pyeq2-master" to "pyeq2"')
+if sys.path[0].find('pyeq2-master') != -1:raise Exception('Please rename git checkout directory from "pyeq2-master" to "pyeq2"')
 exampleFileDirectory = sys.path[0][:sys.path[0].rfind(os.sep)]
 pyeq2IimportDirectory =  os.path.join(os.path.join(exampleFileDirectory, '..'), '..')
 if pyeq2IimportDirectory not in sys.path:
     sys.path.append(pyeq2IimportDirectory)
-    
+
 import pyeq2
 
 
@@ -49,9 +49,17 @@ def SetParametersAndFit(equationString, inFittingTargetString, inExtendedVersion
     # individual cluster nodes must be able to import pyeq2
     import pyeq2
 
-    exec('equation = ' + equationString +'("' + inFittingTargetString + '", "' + inExtendedVersionString + '")')
+    exec(
+        f'equation = {equationString}'
+        + '("'
+        + inFittingTargetString
+        + '", "'
+        + inExtendedVersionString
+        + '")'
+    )
+
     pyeq2.dataConvertorService().ConvertAndSortColumnarASCII(inTextData, equation, False)
- 
+
     try:
         # check for number of coefficients > number of data points to be fitted
         if len(equation.GetCoefficientDesignators()) > len(equation.dataCache.allDataCacheDictionary['DependentData']):
@@ -93,19 +101,20 @@ for submodule in inspect.getmembers(pyeq2.Models_3D):
                    equationClass[1].userSelectableRationalFlag or \
                    equationClass[1].userDefinedFunctionFlag:
                     continue
-                
+
                 for extendedVersionString in ['Default', 'Offset']:
                     
                     if (extendedVersionString == 'Offset') and (equationClass[1].autoGenerateOffsetForm == False):
                         continue
-                    
+
                     equationInstance = equationClass[1](fittingTargetString, extendedVersionString)
 
                     if len(equationInstance.GetCoefficientDesignators()) > smoothnessControl:
                         continue
-                    
-                    equationString = equationInstance.__module__ + "." + equationInstance.__class__.__name__
-                    
+
+                    equationString = f"{equationInstance.__module__}.{equationInstance.__class__.__name__}"
+
+
                     job = cluster.submit(equationString, fittingTargetString, extendedVersionString, textData)
                     jobs.append(job)
 
@@ -116,11 +125,10 @@ allResultList = []
 for job in jobs:
     results = job()
     if job.exception: # can also use job.status
-        print('Remote Exception in one of the jobs\n', str(job.exception))
-    else:
-        if results:
-            print("Remotely fitted", results[1])
-            allResultList.append(results)
+        print('Remote Exception in one of the jobs\n', job.exception)
+    elif results:
+        print("Remotely fitted", results[1])
+        allResultList.append(results)
 
 
 print()
@@ -137,7 +145,18 @@ equationSolvedCoefficients = topResult[2]
 equationString = topResult[3]
 extendedVersionString = topResult[4]
 
-exec('equation = ' + equationString +'("' + fittingTargetString + '", "' + extendedVersionString + '")')
+exec(
+    f'equation = {equationString}'
+    + '("'
+    + fittingTargetString
+    + '", "'
+    + extendedVersionString
+    + '")'
+)
 
-print('Lowest fitting target result was ' + fittingTargetString + " of " + str(fittedTargetValue))
+
+print(
+    f'Lowest fitting target result was {fittingTargetString} of {str(fittedTargetValue)}'
+)
+
 print('for the equation "' + equationDisplayName + '"')

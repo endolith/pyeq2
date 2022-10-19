@@ -20,19 +20,27 @@ class IExtendedVersionHandler(object):
 
     @abc.abstractmethod
     def AssembleDisplayHTML(self):
-        raise NotImplementedError('The IExtendedVersionHandler abstract base class does not implement ' + inspect.stack()[0][3])
+        raise NotImplementedError(
+            f'The IExtendedVersionHandler abstract base class does not implement {inspect.stack()[0][3]}'
+        )
 
     @abc.abstractmethod
     def AssembleDisplayName(self, inModel):
-        raise NotImplementedError('The IExtendedVersionHandler abstract base class does not implement ' + inspect.stack()[0][3])
+        raise NotImplementedError(
+            f'The IExtendedVersionHandler abstract base class does not implement {inspect.stack()[0][3]}'
+        )
 
     @abc.abstractmethod
     def AssembleCoefficientDesignators(self):
-        raise NotImplementedError('The IExtendedVersionHandler abstract base class does not implement ' + inspect.stack()[0][3])
+        raise NotImplementedError(
+            f'The IExtendedVersionHandler abstract base class does not implement {inspect.stack()[0][3]}'
+        )
 
     @abc.abstractmethod
     def AssembleOutputSourceCodeCPP(self, IModel):
-        raise NotImplementedError('The IExtendedVersionHandler abstract base class does not implement ' + inspect.stack()[0][3])
+        raise NotImplementedError(
+            f'The IExtendedVersionHandler abstract base class does not implement {inspect.stack()[0][3]}'
+        )
 
 
     def ShouldDataBeRejected(self, inModel):
@@ -50,9 +58,12 @@ class IExtendedVersionHandler(object):
             return True
         if (inModel.independentData1CannotContainBothPositiveAndNegativeFlag == True) and (inModel.dataCache.independentData1ContainsPositiveFlag == True) and (inModel.dataCache.independentData1ContainsNegativeFlag == True):
             return True
-        if (inModel.independentData2CannotContainBothPositiveAndNegativeFlag == True) and (inModel.dataCache.independentData2ContainsPositiveFlag == True) and (inModel.dataCache.independentData2ContainsNegativeFlag == True):
-            return True
-        return False
+        return (
+            inModel.independentData2CannotContainBothPositiveAndNegativeFlag
+            == True
+            and inModel.dataCache.independentData2ContainsPositiveFlag == True
+            and inModel.dataCache.independentData2ContainsNegativeFlag == True
+        )
 
 
     def GetAdditionalDataCacheFunctions(self, inModel, inDataCacheFunctions):
@@ -63,26 +74,29 @@ class IExtendedVersionHandler(object):
                 foundX = True
             if i[0] == 'XY' and inModel.GetDimensionality() == 3:
                 foundXY = True
-                
+
         if inModel.GetDimensionality() == 2:
             if not foundX:
                 return inDataCacheFunctions + \
-                       [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
-        else:
-            if not foundXY:
-                return inDataCacheFunctions + \
+                           [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
+        elif not foundXY:
+            return inDataCacheFunctions + \
                        [[pyeq2.DataCache.DataCacheFunctions.XY(NameOrValueFlag=1), []]]
         return inDataCacheFunctions
 
 
     @abc.abstractmethod
     def GetAdditionalModelPredictions(self, inBaseModelCalculation, inCoeffs, inDataCacheDictionary, inModel):
-        raise NotImplementedError('The IExtendedVersionHandler abstract base class does not implement ' + inspect.stack()[0][3])
+        raise NotImplementedError(
+            f'The IExtendedVersionHandler abstract base class does not implement {inspect.stack()[0][3]}'
+        )
 
 
     @abc.abstractmethod
     def AppendAdditionalCoefficientBounds(self, inModel):
-        raise NotImplementedError('The IExtendedVersionHandler abstract base class does not implement ' + inspect.stack()[0][3])
+        raise NotImplementedError(
+            f'The IExtendedVersionHandler abstract base class does not implement {inspect.stack()[0][3]}'
+        )
 
 
     # duplicated in Polyfunctions.py

@@ -27,35 +27,38 @@ import pyeq2.Model_2D_BaseClass
 
 def cppCodeGeneratorForLegendrePolynomials(n, cosineFlag):
     # see http://mathworld.wolfram.com/LegendrePolynomial.html
-    if cosineFlag:
-        x = 'cos(x_in)'
-    else:
-        x = 'x_in'
-
+    x = 'cos(x_in)' if cosineFlag else 'x_in'
     if n == 0:
         return "1.0"
     elif n == 1:
         return "x_in"
     elif n == 2:
-        return "(1.0 / 2.0) * (3.0*pow(" + x + ", 2.0) - 1.0)"
+        return f"(1.0 / 2.0) * (3.0*pow({x}, 2.0) - 1.0)"
     elif n == 3:
-        return "(1.0 / 2.0) * (5.0*pow(" + x + ", 3.0) - 3.0*" + x + ")"
+        return f"(1.0 / 2.0) * (5.0*pow({x}, 3.0) - 3.0*{x})"
     elif n == 4:
-        return "(1.0 / 8.0) * (35.0*pow(" + x + ", 4.0) - 30.0*pow(" + x + ", 2.0) + 3)"
+        return f"(1.0 / 8.0) * (35.0*pow({x}, 4.0) - 30.0*pow({x}, 2.0) + 3)"
     elif n == 5:
-        return "(1.0 / 8.0) * (63.0*pow(" + x + ", 5.0) - 70.0*pow(" + x + ", 3.0) + 15.0*" + x + ")"
+        return f"(1.0 / 8.0) * (63.0*pow({x}, 5.0) - 70.0*pow({x}, 3.0) + 15.0*{x})"
     elif n == 6:
-        return "(1.0 / 16.0) * (231.0*pow(" + x + ", 6.0) - 315.0*pow(" + x + ", 4.0) + 105.0*pow(" + x + ", 2.0) - 5)"
+        return f"(1.0 / 16.0) * (231.0*pow({x}, 6.0) - 315.0*pow({x}, 4.0) + 105.0*pow({x}, 2.0) - 5)"
+
     elif n == 7:
-        return "(1.0 / 16.0) * (429.0*pow(" + x + ", 7.0) - 693.0*pow(" + x + ", 5.0) + 315.0*pow(" + x + ", 3.0) - 35.0*" + x + ")"
+        return f"(1.0 / 16.0) * (429.0*pow({x}, 7.0) - 693.0*pow({x}, 5.0) + 315.0*pow({x}, 3.0) - 35.0*{x})"
+
     elif n == 8:
-        return "(1.0 / 128.0) * (6435.0*pow(" + x + ", 8.0) - 12012.0*pow(" + x + ", 6.0) + 6930.0*pow(" + x + ", 4.0) - 1260.0*pow(" + x + ", 2.0) + 35.0)"
+        return f"(1.0 / 128.0) * (6435.0*pow({x}, 8.0) - 12012.0*pow({x}, 6.0) + 6930.0*pow({x}, 4.0) - 1260.0*pow({x}, 2.0) + 35.0)"
+
     elif n == 9:
-        return "(1.0 / 128.0) * (12155.0*pow(" + x + ", 9.0) - 25740.0*pow(" + x + ", 7.0) + 18018.0*pow(" + x + ", 5.0) - 4620.0*pow(" + x + ", 3.0) + 315.0*" + x + ")"
+        return f"(1.0 / 128.0) * (12155.0*pow({x}, 9.0) - 25740.0*pow({x}, 7.0) + 18018.0*pow({x}, 5.0) - 4620.0*pow({x}, 3.0) + 315.0*{x})"
+
     elif n == 10:
-        return "(1.0 / 256.0) * (46189.0*pow(" + x + ", 10.0) - 109395.0*pow(" + x + ", 8.0) + 90090.0*pow(" + x + ", 6.0) - 30030.0*pow(" + x + ", 4.0) + 3465.0*pow(" + x + ", 2.0) - 63.0)"
+        return f"(1.0 / 256.0) * (46189.0*pow({x}, 10.0) - 109395.0*pow({x}, 8.0) + 90090.0*pow({x}, 6.0) - 30030.0*pow({x}, 4.0) + 3465.0*pow({x}, 2.0) - 63.0)"
+
     else:
-        raise Exception("Legendre Polynomial Degree of " + str(n) + " is too high, please use a degree of 10 or less.")
+        raise Exception(
+            f"Legendre Polynomial Degree of {str(n)} is too high, please use a degree of 10 or less."
+        )
 
 
 class EighthDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
@@ -83,8 +86,10 @@ class EighthDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []]
+        ]
+
         functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LegendreX(NameOrValueFlag=1, args=[2, 0]), [2, 0]])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LegendreX(NameOrValueFlag=1, args=[3, 0]), [3, 0]])
@@ -105,7 +110,7 @@ class EighthDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass
         LegendreX_6 = inDataCacheDictionary['LegendreX_6'] # only need to perform this dictionary look-up once
         LegendreX_7 = inDataCacheDictionary['LegendreX_7'] # only need to perform this dictionary look-up once
         LegendreX_8 = inDataCacheDictionary['LegendreX_8'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -131,8 +136,11 @@ class EighthDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass
 
 
     def SpecificCodeCPP(self):
-        s  = "\t// see http://mathworld.wolfram.com/LegendrePolynomial.html\n"
-        s += "\ttemp += a + b * x_in;\n"
+        s = (
+            "\t// see http://mathworld.wolfram.com/LegendrePolynomial.html\n"
+            + "\ttemp += a + b * x_in;\n"
+        )
+
         s += "\ttemp += c * (" + cppCodeGeneratorForLegendrePolynomials(2, 0) + ");\n"
         s += "\ttemp += d * (" + cppCodeGeneratorForLegendrePolynomials(3, 0) + ");\n"
         s += "\ttemp += f * (" + cppCodeGeneratorForLegendrePolynomials(4, 0) + ");\n"
@@ -169,8 +177,10 @@ class FifthDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass)
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []]
+        ]
+
         functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LegendreX(NameOrValueFlag=1, args=[2, 0]), [2, 0]])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LegendreX(NameOrValueFlag=1, args=[3, 0]), [3, 0]])
@@ -185,7 +195,7 @@ class FifthDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass)
         LegendreX_3 = inDataCacheDictionary['LegendreX_3'] # only need to perform this dictionary look-up once
         LegendreX_4 = inDataCacheDictionary['LegendreX_4'] # only need to perform this dictionary look-up once
         LegendreX_5 = inDataCacheDictionary['LegendreX_5'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -205,8 +215,11 @@ class FifthDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass)
 
 
     def SpecificCodeCPP(self):
-        s  = "\t// see http://mathworld.wolfram.com/LegendrePolynomial.html\n"
-        s += "\ttemp += a + b * x_in;\n"
+        s = (
+            "\t// see http://mathworld.wolfram.com/LegendrePolynomial.html\n"
+            + "\ttemp += a + b * x_in;\n"
+        )
+
         s += "\ttemp += c * (" + cppCodeGeneratorForLegendrePolynomials(2, 0) + ");\n"
         s += "\ttemp += d * (" + cppCodeGeneratorForLegendrePolynomials(3, 0) + ");\n"
         s += "\ttemp += f * (" + cppCodeGeneratorForLegendrePolynomials(4, 0) + ");\n"
@@ -240,8 +253,10 @@ class FourthDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []]
+        ]
+
         functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LegendreX(NameOrValueFlag=1, args=[2, 0]), [2, 0]])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LegendreX(NameOrValueFlag=1, args=[3, 0]), [3, 0]])
@@ -254,7 +269,7 @@ class FourthDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass
         LegendreX_2 = inDataCacheDictionary['LegendreX_2'] # only need to perform this dictionary look-up once
         LegendreX_3 = inDataCacheDictionary['LegendreX_3'] # only need to perform this dictionary look-up once
         LegendreX_4 = inDataCacheDictionary['LegendreX_4'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -272,8 +287,11 @@ class FourthDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass
 
 
     def SpecificCodeCPP(self):
-        s  = "\t// see http://mathworld.wolfram.com/LegendrePolynomial.html\n"
-        s += "\ttemp += a + b * x_in;\n"
+        s = (
+            "\t// see http://mathworld.wolfram.com/LegendrePolynomial.html\n"
+            + "\ttemp += a + b * x_in;\n"
+        )
+
         s += "\ttemp += c * (" + cppCodeGeneratorForLegendrePolynomials(2, 0) + ");\n"
         s += "\ttemp += d * (" + cppCodeGeneratorForLegendrePolynomials(3, 0) + ");\n"
         s += "\ttemp += f * (" + cppCodeGeneratorForLegendrePolynomials(4, 0) + ");\n"
@@ -306,15 +324,17 @@ class GammaRayAngularDistributionDegreesA(pyeq2.Model_2D_BaseClass.Model_2D_Base
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []]
+        ]
+
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LegendreCosineDegreesX(NameOrValueFlag=1, args=[2, 2]), [2, 2]])
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         LegendreCosineDegreesX_2 = inDataCacheDictionary['LegendreCosineDegreesX_2'] # only need to perform this dictionary look-up once
-        
+
         A0 = inCoeffs[0]
         A2 = inCoeffs[1]
 
@@ -357,8 +377,10 @@ class GammaRayAngularDistributionDegreesB(pyeq2.Model_2D_BaseClass.Model_2D_Base
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []]
+        ]
+
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LegendreCosineDegreesX(NameOrValueFlag=1, args=[2, 2]), [2, 2]])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LegendreCosineDegreesX(NameOrValueFlag=1, args=[4, 2]), [4, 2]])
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
@@ -367,7 +389,7 @@ class GammaRayAngularDistributionDegreesB(pyeq2.Model_2D_BaseClass.Model_2D_Base
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         LegendreCosineDegreesX_2 = inDataCacheDictionary['LegendreCosineDegreesX_2'] # only need to perform this dictionary look-up once
         LegendreCosineDegreesX_4 = inDataCacheDictionary['LegendreCosineDegreesX_4'] # only need to perform this dictionary look-up once
-        
+
         A0 = inCoeffs[0]
         A2 = inCoeffs[1]
         A4 = inCoeffs[2]
@@ -411,15 +433,17 @@ class GammaRayAngularDistributionRadiansA(pyeq2.Model_2D_BaseClass.Model_2D_Base
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []]
+        ]
+
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LegendreCosineRadiansX(NameOrValueFlag=1, args=[2, 1]), [2, 1]])
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         LegendreCosineRadiansX_2 = inDataCacheDictionary['LegendreCosineRadiansX_2'] # only need to perform this dictionary look-up once
-        
+
         A0 = inCoeffs[0]
         A2 = inCoeffs[1]
 
@@ -462,8 +486,10 @@ class GammaRayAngularDistributionRadiansB(pyeq2.Model_2D_BaseClass.Model_2D_Base
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []]
+        ]
+
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LegendreCosineRadiansX(NameOrValueFlag=1, args=[2, 1]), [2, 1]])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LegendreCosineRadiansX(NameOrValueFlag=1, args=[4, 1]), [4, 1]])
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
@@ -472,7 +498,7 @@ class GammaRayAngularDistributionRadiansB(pyeq2.Model_2D_BaseClass.Model_2D_Base
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         LegendreCosineRadiansX_2 = inDataCacheDictionary['LegendreCosineRadiansX_2'] # only need to perform this dictionary look-up once
         LegendreCosineRadiansX_4 = inDataCacheDictionary['LegendreCosineRadiansX_4'] # only need to perform this dictionary look-up once
-        
+
         A0 = inCoeffs[0]
         A2 = inCoeffs[1]
         A4 = inCoeffs[2]
@@ -516,8 +542,10 @@ class NinthDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass)
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []]
+        ]
+
         functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LegendreX(NameOrValueFlag=1, args=[2, 0]), [2, 0]])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LegendreX(NameOrValueFlag=1, args=[3, 0]), [3, 0]])
@@ -540,7 +568,7 @@ class NinthDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass)
         LegendreX_7 = inDataCacheDictionary['LegendreX_7'] # only need to perform this dictionary look-up once
         LegendreX_8 = inDataCacheDictionary['LegendreX_8'] # only need to perform this dictionary look-up once
         LegendreX_9 = inDataCacheDictionary['LegendreX_9'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -568,8 +596,11 @@ class NinthDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass)
 
 
     def SpecificCodeCPP(self):
-        s  = "\t// see http://mathworld.wolfram.com/LegendrePolynomial.html\n"
-        s += "\ttemp += a + b * x_in;\n"
+        s = (
+            "\t// see http://mathworld.wolfram.com/LegendrePolynomial.html\n"
+            + "\ttemp += a + b * x_in;\n"
+        )
+
         s += "\ttemp += c * (" + cppCodeGeneratorForLegendrePolynomials(2, 0) + ");\n"
         s += "\ttemp += d * (" + cppCodeGeneratorForLegendrePolynomials(3, 0) + ");\n"
         s += "\ttemp += f * (" + cppCodeGeneratorForLegendrePolynomials(4, 0) + ");\n"
@@ -607,8 +638,10 @@ class SecondDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []]
+        ]
+
         functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LegendreX(NameOrValueFlag=1, args=[2, 0]), [2, 0]])
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
@@ -617,7 +650,7 @@ class SecondDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
         LegendreX_2 = inDataCacheDictionary['LegendreX_2'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -631,8 +664,11 @@ class SecondDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass
 
 
     def SpecificCodeCPP(self):
-        s  = "\t// see http://mathworld.wolfram.com/LegendrePolynomial.html\n"
-        s += "\ttemp += a + b * x_in;\n"
+        s = (
+            "\t// see http://mathworld.wolfram.com/LegendrePolynomial.html\n"
+            + "\ttemp += a + b * x_in;\n"
+        )
+
         s += "\ttemp += c * (" + cppCodeGeneratorForLegendrePolynomials(2, 0) + ");\n"
         return s
 
@@ -663,8 +699,10 @@ class SeventhDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClas
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []]
+        ]
+
         functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LegendreX(NameOrValueFlag=1, args=[2, 0]), [2, 0]])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LegendreX(NameOrValueFlag=1, args=[3, 0]), [3, 0]])
@@ -683,7 +721,7 @@ class SeventhDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClas
         LegendreX_5 = inDataCacheDictionary['LegendreX_5'] # only need to perform this dictionary look-up once
         LegendreX_6 = inDataCacheDictionary['LegendreX_6'] # only need to perform this dictionary look-up once
         LegendreX_7 = inDataCacheDictionary['LegendreX_7'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -707,8 +745,11 @@ class SeventhDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClas
 
 
     def SpecificCodeCPP(self):
-        s  = "\t// see http://mathworld.wolfram.com/LegendrePolynomial.html\n"
-        s += "\ttemp += a + b * x_in;\n"
+        s = (
+            "\t// see http://mathworld.wolfram.com/LegendrePolynomial.html\n"
+            + "\ttemp += a + b * x_in;\n"
+        )
+
         s += "\ttemp += c * (" + cppCodeGeneratorForLegendrePolynomials(2, 0) + ");\n"
         s += "\ttemp += d * (" + cppCodeGeneratorForLegendrePolynomials(3, 0) + ");\n"
         s += "\ttemp += f * (" + cppCodeGeneratorForLegendrePolynomials(4, 0) + ");\n"
@@ -744,8 +785,10 @@ class SixthDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass)
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []]
+        ]
+
         functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LegendreX(NameOrValueFlag=1, args=[2, 0]), [2, 0]])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LegendreX(NameOrValueFlag=1, args=[3, 0]), [3, 0]])
@@ -762,7 +805,7 @@ class SixthDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass)
         LegendreX_4 = inDataCacheDictionary['LegendreX_4'] # only need to perform this dictionary look-up once
         LegendreX_5 = inDataCacheDictionary['LegendreX_5'] # only need to perform this dictionary look-up once
         LegendreX_6 = inDataCacheDictionary['LegendreX_6'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -784,8 +827,11 @@ class SixthDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass)
 
 
     def SpecificCodeCPP(self):
-        s  = "\t// see http://mathworld.wolfram.com/LegendrePolynomial.html\n"
-        s += "\ttemp += a + b * x_in;\n"
+        s = (
+            "\t// see http://mathworld.wolfram.com/LegendrePolynomial.html\n"
+            + "\ttemp += a + b * x_in;\n"
+        )
+
         s += "\ttemp += c * (" + cppCodeGeneratorForLegendrePolynomials(2, 0) + ");\n"
         s += "\ttemp += d * (" + cppCodeGeneratorForLegendrePolynomials(3, 0) + ");\n"
         s += "\ttemp += f * (" + cppCodeGeneratorForLegendrePolynomials(4, 0) + ");\n"
@@ -820,8 +866,10 @@ class TenthDegreeLegendrePolynomial(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass)
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []]
+        ]
+
         functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LegendreX(NameOrValueFlag=1, args=[2, 0]), [2, 0]])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LegendreX(NameOrValueFlag=1, args=[3, 0]), [3, 0]])

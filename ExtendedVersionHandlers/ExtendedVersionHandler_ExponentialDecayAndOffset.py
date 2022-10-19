@@ -22,22 +22,20 @@ numpy.seterr(all= 'ignore')
 class ExtendedVersionHandler_ExponentialDecayAndOffset(IExtendedVersionHandler.IExtendedVersionHandler):
     
     def AssembleDisplayHTML(self, inModel):
-        x_or_xy = 'xy'
-        if inModel.GetDimensionality() == 2:
-            x_or_xy = 'x'
-            
+        x_or_xy = 'x' if inModel.GetDimensionality() == 2 else 'xy'
         if inModel.baseEquationHasGlobalMultiplierOrDivisor_UsedInExtendedVersions:
-            return inModel._HTML + '<br>' + inModel._leftSideHTML + ' = ' + inModel._leftSideHTML + ' / exp(' + x_or_xy + ') + Offset'
-        else:
-            try:
-                cd = inModel.GetCoefficientDesignators()
-                return inModel._HTML + '<br>' + inModel._leftSideHTML + ' = ' + inModel._leftSideHTML + ' / (' + cd[-2] + ' * exp(' + x_or_xy + ')) + Offset'
-            except:
-                return inModel._HTML + '<br>' + inModel._leftSideHTML + ' = ' + inModel._leftSideHTML + ' / (exp(' + x_or_xy + ')) + Offset'
+            return f'{inModel._HTML}<br>{inModel._leftSideHTML} = {inModel._leftSideHTML} / exp({x_or_xy}) + Offset'
+
+        try:
+            cd = inModel.GetCoefficientDesignators()
+            return f'{inModel._HTML}<br>{inModel._leftSideHTML} = {inModel._leftSideHTML} / ({cd[-2]} * exp({x_or_xy})) + Offset'
+
+        except:
+            return f'{inModel._HTML}<br>{inModel._leftSideHTML} = {inModel._leftSideHTML} / (exp({x_or_xy})) + Offset'
 
 
     def AssembleDisplayName(self, inModel):
-        return inModel._baseName + ' With Exponential Decay And Offset'
+        return f'{inModel._baseName} With Exponential Decay And Offset'
 
 
     def AssembleSourceCodeName(self, inModel):
@@ -68,15 +66,11 @@ class ExtendedVersionHandler_ExponentialDecayAndOffset(IExtendedVersionHandler.I
 
 
     def AssembleOutputSourceCodeCPP(self, inModel):
-        x_or_xy = 'x_in * y_in'
-        if inModel.GetDimensionality() == 2:
-            x_or_xy = 'x_in'
-            
+        x_or_xy = 'x_in' if inModel.GetDimensionality() == 2 else 'x_in * y_in'
         if inModel.baseEquationHasGlobalMultiplierOrDivisor_UsedInExtendedVersions:
             return inModel.SpecificCodeCPP() + "\ttemp = temp / exp(" + x_or_xy + ") + Offset;\n"
-        else:
-            cd = inModel.GetCoefficientDesignators()
-            return inModel.SpecificCodeCPP() + "\ttemp = temp / ("  + cd[-2] + ' * exp(' + x_or_xy + ")) + Offset;\n"
+        cd = inModel.GetCoefficientDesignators()
+        return inModel.SpecificCodeCPP() + "\ttemp = temp / ("  + cd[-2] + ' * exp(' + x_or_xy + ")) + Offset;\n"
         
 
     def GetAdditionalDataCacheFunctions(self, inModel, inDataCacheFunctions):
@@ -87,26 +81,33 @@ class ExtendedVersionHandler_ExponentialDecayAndOffset(IExtendedVersionHandler.I
                 foundX = True
             if i[0] == 'ExpXY' and inModel.GetDimensionality() == 3:
                 foundXY = True
-                
+
         if inModel.GetDimensionality() == 2:
             if not foundX:
                 return inDataCacheFunctions + \
-                       [[pyeq2.DataCache.DataCacheFunctions.ExpX(NameOrValueFlag=1), []]]
-        else:
-            if not foundXY:
-                return inDataCacheFunctions + \
+                           [[pyeq2.DataCache.DataCacheFunctions.ExpX(NameOrValueFlag=1), []]]
+        elif not foundXY:
+            return inDataCacheFunctions + \
                        [[pyeq2.DataCache.DataCacheFunctions.ExpXY(NameOrValueFlag=1), []]]
         return inDataCacheFunctions
 
 
     def GetAdditionalModelPredictions(self, inBaseModelCalculation, inCoeffs, inDataCacheDictionary, inModel):
         if inModel.GetDimensionality() == 2:
-            if inModel.baseEquationHasGlobalMultiplierOrDivisor_UsedInExtendedVersions:
-                return self.ConvertInfAndNanToLargeNumber(inBaseModelCalculation / inDataCacheDictionary['ExpX'] + inCoeffs[len(inCoeffs)-1])
-            else:
-                return self.ConvertInfAndNanToLargeNumber(inBaseModelCalculation / (inCoeffs[len(inCoeffs)-2] * inDataCacheDictionary['ExpX']) + inCoeffs[len(inCoeffs)-1])
+            return (
+                self.ConvertInfAndNanToLargeNumber(
+                    inBaseModelCalculation / inDataCacheDictionary['ExpX']
+                    + inCoeffs[len(inCoeffs) - 1]
+                )
+                if inModel.baseEquationHasGlobalMultiplierOrDivisor_UsedInExtendedVersions
+                else self.ConvertInfAndNanToLargeNumber(
+                    inBaseModelCalculation
+                    / (inCoeffs[len(inCoeffs) - 2] * inDataCacheDictionary['ExpX'])
+                    + inCoeffs[len(inCoeffs) - 1]
+                )
+            )
+
+        if inModel.baseEquationHasGlobalMultiplierOrDivisor_UsedInExtendedVersions:
+            return self.ConvertInfAndNanToLargeNumber(inBaseModelCalculation / inDataCacheDictionary['ExpXY'] + inCoeffs[len(inCoeffs)-1])
         else:
-            if inModel.baseEquationHasGlobalMultiplierOrDivisor_UsedInExtendedVersions:
-                return self.ConvertInfAndNanToLargeNumber(inBaseModelCalculation / inDataCacheDictionary['ExpXY'] + inCoeffs[len(inCoeffs)-1])
-            else:
-                return self.ConvertInfAndNanToLargeNumber(inBaseModelCalculation / (inCoeffs[len(inCoeffs)-2] * inDataCacheDictionary['ExpXY']) + inCoeffs[len(inCoeffs)-1])
+            return self.ConvertInfAndNanToLargeNumber(inBaseModelCalculation / (inCoeffs[len(inCoeffs)-2] * inDataCacheDictionary['ExpXY']) + inCoeffs[len(inCoeffs)-1])

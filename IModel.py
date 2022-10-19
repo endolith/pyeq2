@@ -64,30 +64,54 @@ class IModel(object):
     def __init__(self, inFittingTarget = 'SSQABS', inExtendedVersionName = 'Default'):
         if inExtendedVersionName == '':
             inExtendedVersionName = 'Default'
-            
+
         if inFittingTarget not in list(self.fittingTargetDictionary.keys()):
-            raise Exception(str(inFittingTarget) + ' is not in the IModel class fitting target dictionary.')
+            raise Exception(
+                f'{str(inFittingTarget)} is not in the IModel class fitting target dictionary.'
+            )
+
         self.fittingTarget = inFittingTarget
-        
+
         inExtendedVersionName = inExtendedVersionName.replace(' ', '')
         if inExtendedVersionName not in  pyeq2.ExtendedVersionHandlers.extendedVersionHandlerNameList:
-            raise Exception(inExtendedVersionName + ' is not in the list of extended version handler names.')
-        
+            raise Exception(
+                f'{inExtendedVersionName} is not in the list of extended version handler names.'
+            )
+
+
         allowedExtendedVersion = True
-        if (-1 != inExtendedVersionName.find('Offset')) and (self.autoGenerateOffsetForm == False):
+        if (
+            inExtendedVersionName.find('Offset') != -1
+            and self.autoGenerateOffsetForm == False
+        ):
             allowedExtendedVersion = False
-        if (-1 != inExtendedVersionName.find('Reciprocal')) and (self.autoGenerateReciprocalForm == False):
+        if (
+            inExtendedVersionName.find('Reciprocal') != -1
+            and self.autoGenerateReciprocalForm == False
+        ):
             allowedExtendedVersion = False
-        if (-1 != inExtendedVersionName.find('Inverse')) and (self.autoGenerateInverseForms == False):
+        if (
+            inExtendedVersionName.find('Inverse') != -1
+            and self.autoGenerateInverseForms == False
+        ):
             allowedExtendedVersion = False
-        if (-1 != inExtendedVersionName.find('Growth')) and (self.autoGenerateGrowthAndDecayForms == False):
+        if (
+            inExtendedVersionName.find('Growth') != -1
+            and self.autoGenerateGrowthAndDecayForms == False
+        ):
             allowedExtendedVersion = False
-        if (-1 != inExtendedVersionName.find('Decay')) and (self.autoGenerateGrowthAndDecayForms == False):
+        if (
+            inExtendedVersionName.find('Decay') != -1
+            and self.autoGenerateGrowthAndDecayForms == False
+        ):
             allowedExtendedVersion = False
-        if allowedExtendedVersion == False:
-            raise Exception('This equation does not allow an extended version named  "' + inExtendedVersionName + '".')            
-        self.extendedVersionHandler = eval('pyeq2.ExtendedVersionHandlers.ExtendedVersionHandler_' + inExtendedVersionName + '.ExtendedVersionHandler_' + inExtendedVersionName + '()')
-        
+        if not allowedExtendedVersion:
+            raise Exception('This equation does not allow an extended version named  "' + inExtendedVersionName + '".')
+        self.extendedVersionHandler = eval(
+            f'pyeq2.ExtendedVersionHandlers.ExtendedVersionHandler_{inExtendedVersionName}.ExtendedVersionHandler_{inExtendedVersionName}()'
+        )
+
+
         self.dataCache = pyeq2.dataCache()
         self.upperCoefficientBounds = []
         self.lowerCoefficientBounds = []
@@ -101,7 +125,7 @@ class IModel(object):
         self.rationalNumeratorFlags = []
         self.rationalDenominatorFlags = []
         self.deEstimatedCoefficients = []
-        
+
         try:
             if self._dimensionality == 2:
                 self.exampleData = '''

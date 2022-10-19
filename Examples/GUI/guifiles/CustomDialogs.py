@@ -9,12 +9,12 @@ from matplotlib.figure import Figure
 import matplotlib
 import matplotlib.pyplot
 
-if -1 != sys.path[0].find('pyeq2-master'):raise Exception('Please rename git checkout directory from "pyeq2-master" to "pyeq2"')
+if sys.path[0].find('pyeq2-master') != -1:raise Exception('Please rename git checkout directory from "pyeq2-master" to "pyeq2"')
 exampleFileDirectory = sys.path[0][:sys.path[0].rfind(os.sep)]
 pyeq2IimportDirectory =  os.path.join(os.path.join(os.path.join(exampleFileDirectory, '..'), '..'), '..')
 if pyeq2IimportDirectory not in sys.path:
     sys.path.append(pyeq2IimportDirectory)
-    
+
 import pyeq2
 
 
@@ -23,83 +23,89 @@ import pyeq2
 class CoefficientAndFitStatisticsReport(wx.Panel):
     def __init__(self, parent, equation):
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY)
-        
+
         self.text = wx.TextCtrl(self, -1, '', style=wx.TE_MULTILINE|wx.HSCROLL|wx.VSCROLL|wx.TE_READONLY)
-        
+
         if equation.upperCoefficientBounds or equation.lowerCoefficientBounds:
             self.text.AppendText('This model has coefficient bounds. Parameter statistics may\n')
             self.text.AppendText('not be valid for parameter values at or near the bounds.\n')
             self.text.AppendText('\n')
-        
-        self.text.AppendText('Degress of freedom error ' + str(equation.df_e) + '\n')
-        self.text.AppendText('Degress of freedom regression ' + str(equation.df_r) + '\n')
-        
-        if equation.rmse == None:
+
+        self.text.AppendText(f'Degress of freedom error {str(equation.df_e)}' + '\n')
+        self.text.AppendText(
+            f'Degress of freedom regression {str(equation.df_r)}' + '\n'
+        )
+
+
+        if equation.rmse is None:
             self.text.AppendText('Root Mean Squared Error (RMSE): n/a\n')
         else:
-            self.text.AppendText('Root Mean Squared Error (RMSE): ' + str(equation.rmse) + '\n')
-        
-        if equation.r2 == None:
+            self.text.AppendText(
+                f'Root Mean Squared Error (RMSE): {str(equation.rmse)}' + '\n'
+            )
+
+
+        if equation.r2 is None:
             self.text.AppendText('R-squared: n/a\n')
         else:
-            self.text.AppendText('R-squared: ' + str(equation.r2) + '\n')
-        
-        if equation.r2adj == None:
+            self.text.AppendText(f'R-squared: {str(equation.r2)}' + '\n')
+
+        if equation.r2adj is None:
             self.text.AppendText('R-squared adjusted: n/a\n')
         else:
-            self.text.AppendText('R-squared adjusted: ' + str(equation.r2adj) + '\n')
-        
-        if equation.Fstat == None:
+            self.text.AppendText(f'R-squared adjusted: {str(equation.r2adj)}' + '\n')
+
+        if equation.Fstat is None:
             self.text.AppendText('Model F-statistic: n/a\n')
         else:
-            self.text.AppendText('Model F-statistic: ' + str(equation.Fstat) + '\n')
-        
-        if equation.Fpv == None:
+            self.text.AppendText(f'Model F-statistic: {str(equation.Fstat)}' + '\n')
+
+        if equation.Fpv is None:
             self.text.AppendText('Model F-statistic p-value: n/a\n')
         else:
-            self.text.AppendText('Model F-statistic p-value: ' + str(equation.Fpv) + '\n')
-        
-        if equation.ll == None:
+            self.text.AppendText(f'Model F-statistic p-value: {str(equation.Fpv)}' + '\n')
+
+        if equation.ll is None:
             self.text.AppendText('Model log-likelihood: n/a\n')
         else:
-            self.text.AppendText('Model log-likelihood: ' + str(equation.ll) + '\n')
-        
-        if equation.aic == None:
+            self.text.AppendText(f'Model log-likelihood: {str(equation.ll)}' + '\n')
+
+        if equation.aic is None:
             self.text.AppendText('Model AIC: n/a\n')
         else:
-            self.text.AppendText('Model AIC: ' + str(equation.aic) + '\n')
-        
-        if equation.bic == None:
+            self.text.AppendText(f'Model AIC: {str(equation.aic)}' + '\n')
+
+        if equation.bic is None:
             self.text.AppendText('Model BIC: n/a\n')
         else:
-            self.text.AppendText('Model BIC: ' + str(equation.bic) + '\n')
-        
-        
+            self.text.AppendText(f'Model BIC: {str(equation.bic)}' + '\n')
+                
+
         self.text.AppendText('\n')
         self.text.AppendText("Individual Parameter Statistics:\n")
         for i in range(len(equation.solvedCoefficients)):
-            if equation.tstat_beta == None:
+            if equation.tstat_beta is None:
                 tstat = 'n/a'
             else:
                 tstat = '%-.5E' %  ( equation.tstat_beta[i])
-        
-            if equation.pstat_beta == None:
+
+            if equation.pstat_beta is None:
                 pstat = 'n/a'
             else:
                 pstat = '%-.5E' %  ( equation.pstat_beta[i])
-        
-            if equation.sd_beta != None:
-                self.text.AppendText("Coefficient %s = %-.16E, std error: %-.5E\n" % (equation.GetCoefficientDesignators()[i], equation.solvedCoefficients[i], equation.sd_beta[i]))
-            else:
+
+            if equation.sd_beta is None:
                 self.text.AppendText("Coefficient %s = %-.16E, std error: n/a\n" % (equation.GetCoefficientDesignators()[i], equation.solvedCoefficients[i]))
+            else:
+                self.text.AppendText("Coefficient %s = %-.16E, std error: %-.5E\n" % (equation.GetCoefficientDesignators()[i], equation.solvedCoefficients[i], equation.sd_beta[i]))
             self.text.AppendText("          t-stat: %s, p-stat: %s, 95 percent confidence intervals: [%-.5E, %-.5E]\n" % (tstat,  pstat, equation.ci[i][0], equation.ci[i][1]))
-        
-        
+
+
         self.text.AppendText('\n')
         self.text.AppendText("Coefficient Covariance Matrix:\n")
         for i in  equation.cov_beta:
             self.text.AppendText(str(i) + '\n')
-        
+
         sizer = wx.BoxSizer()
         sizer.Add(self.text, 1, wx.EXPAND)
 
@@ -111,8 +117,11 @@ class CoefficientAndFitStatisticsReport(wx.Panel):
 class SourceCodeReport(wx.Panel):
     def __init__(self, parent, equation, lanuageNameString):
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY)
-        
-        exec('code = pyeq2.outputSourceCodeService().GetOutputSourceCode' + lanuageNameString + '(equation)')
+
+        exec(
+            f'code = pyeq2.outputSourceCodeService().GetOutputSourceCode{lanuageNameString}(equation)'
+        )
+
         self.text = wx.TextCtrl(self, -1, code, style=wx.TE_MULTILINE|wx.HSCROLL|wx.VSCROLL|wx.TE_READONLY)
 
         sizer = wx.BoxSizer()
@@ -138,32 +147,29 @@ class EquationListReport(wx.Panel):
 
 
     def CreateEquationlist(self, dim):
-        htmlToReturn = '' # build this as we progress
-        
-        if dim == 2:
-            module = pyeq2.Models_2D
-        else:
-            module = pyeq2.Models_3D
-            
-        htmlToReturn += '<table border=1>'
-        
+        module = pyeq2.Models_2D if dim == 2 else pyeq2.Models_3D
+        htmlToReturn = '' + '<table border=1>'
         for submodule in inspect.getmembers(module):
             if inspect.ismodule(submodule[1]):
                 for equationClass in inspect.getmembers(submodule[1]):
                     if inspect.isclass(equationClass[1]):
                         for extendedVersionName in ['Default', 'Offset']:
-                            if (-1 != extendedVersionName.find('Offset')) and (equationClass[1].autoGenerateOffsetForm == False):
+                            if (
+                                extendedVersionName.find('Offset') != -1
+                                and equationClass[1].autoGenerateOffsetForm
+                                == False
+                            ):
                                 continue
-        
+
                             equation = equationClass[1]('SSQABS', extendedVersionName)
                             htmlToReturn += '<tr>'
-                            htmlToReturn += '<td nowrap>' + str(dim) + 'D ' + submodule[0] + '</td>'
-                            htmlToReturn += '<td nowrap>' + equation.GetDisplayName() + '</td>'
-                            htmlToReturn += '<td nowrap>' + equation.GetDisplayHTML() + '</td>'
+                            htmlToReturn += f'<td nowrap>{str(dim)}D {submodule[0]}</td>'
+                            htmlToReturn += f'<td nowrap>{equation.GetDisplayName()}</td>'
+                            htmlToReturn += f'<td nowrap>{equation.GetDisplayHTML()}</td>'
                             htmlToReturn += '</tr>'
-                            
+
         htmlToReturn += '</table>'
-        
+
         return htmlToReturn
 
 
@@ -271,7 +277,7 @@ class PanelContainingOneGraphReport(wx.Panel):
         self.parent.X = None
         self.parent.Y = None
         self.parent.Z = None
-        
+
         self.figure = matplotlib.pyplot.figure()
         matplotlib.pyplot.grid(True)
         self.axes = self.figure.add_subplot(111)
@@ -288,12 +294,10 @@ class Report_AbsoluteErrorHistogram(PanelContainingOneGraphReport):
         if not self.parent.abs_error:
             self.parent.abs_error = equation.modelAbsoluteError
         bincount = len(self.parent.abs_error)/2
-        if bincount < 5:
-            bincount = 5
-        if bincount > 25:
-            bincount = 25
+        bincount = max(bincount, 5)
+        bincount = min(bincount, 25)
         n, bins, patches = self.axes.hist(self.parent.abs_error, bincount, rwidth=0.8)
-        
+
         # some axis space at the top of the graph
         ylim = self.axes.get_ylim()
         if ylim[1] == max(n):
@@ -327,12 +331,10 @@ class Report_PercentErrorHistogram(PanelContainingOneGraphReport):
         if not self.parent.per_error:
             self.parent.per_error = equation.modelPercentError
         bincount = len(self.parent.per_error)/2
-        if bincount < 5:
-            bincount = 5
-        if bincount > 25:
-            bincount = 25
+        bincount = max(bincount, 5)
+        bincount = min(bincount, 25)
         n, bins, patches = self.axes.hist(self.parent.per_error, bincount, rwidth=0.8)
-        
+
         # some axis space at the top of the graph
         ylim = self.axes.get_ylim()
         if ylim[1] == max(n):
@@ -489,11 +491,11 @@ class Report_ModelScatterConfidenceGraph(PanelContainingOneGraphReport):
 class TopLevelResultsNotebook(wx.Notebook):
     def __init__(self, parent, equation):
         wx.Notebook.__init__(self, parent, id=wx.ID_ANY, style=wx.BK_DEFAULT)
-        
+
         # graphs
         graphReportsTab = wx.Notebook(self)
         self.AddPage(graphReportsTab, "Graph Reports")
-        
+
         if equation.GetDimensionality() == 2:
             modelConfidenceScatter = Report_ModelScatterConfidenceGraph(graphReportsTab)
             modelConfidenceScatter.draw(equation)
@@ -502,7 +504,7 @@ class TopLevelResultsNotebook(wx.Notebook):
             surfacePlot = Report_SurfacePlot(graphReportsTab)
             surfacePlot.draw(equation)
             graphReportsTab.AddPage(surfacePlot, "Surface Plot")
-            
+
             contourPlot = Report_ContourPlot(graphReportsTab)
             contourPlot.draw(equation)
             graphReportsTab.AddPage(contourPlot, "Contour Plot")
@@ -519,23 +521,23 @@ class TopLevelResultsNotebook(wx.Notebook):
             percentErrorGraph = Report_PercentErrorGraph(graphReportsTab)
             percentErrorGraph.draw(equation)
             graphReportsTab.AddPage(percentErrorGraph, "Percent Error")
-     
+
             percentErrorHistogram = Report_PercentErrorHistogram(graphReportsTab)
             percentErrorHistogram.draw(equation)
             graphReportsTab.AddPage(percentErrorHistogram, "Percent Error Histogram")
-       
+
         textReportsTab = wx.Notebook(self)
         self.AddPage(textReportsTab, "Text Reports")
-        
+
         textReport1 = CoefficientAndFitStatisticsReport(textReportsTab, equation)
         textReportsTab.AddPage(textReport1, "Coefficient And Fit Statistics")
-        
+
         textReport2 = CoefficientsReport(textReportsTab, equation)
         textReportsTab.AddPage(textReport2, "Coefficient Listing")
-        
+
         textReport3 = DataArrayStatisticsReport(textReportsTab, 'Absolute Error Statistics', equation.modelAbsoluteError)
         textReportsTab.AddPage(textReport3, "Absolute Error Statistics")
-        
+
         if equation.dataCache.DependentDataContainsZeroFlag != 1:
             textReport4 = DataArrayStatisticsReport(textReportsTab, 'Percent Error Statistics', equation.modelPercentError)
             textReportsTab.AddPage(textReport4, "Percent Error Statistics")
@@ -548,29 +550,29 @@ class TopLevelResultsNotebook(wx.Notebook):
 
         sourcecode2 = SourceCodeReport(sourceCodeTab, equation, 'CSHARP')
         sourceCodeTab.AddPage(sourcecode2, "CSHARP")
-    
+
         sourcecode3 = SourceCodeReport(sourceCodeTab, equation, 'VBA')
         sourceCodeTab.AddPage(sourcecode3, "VBA")
-    
+
         sourcecode4 = SourceCodeReport(sourceCodeTab, equation, 'PYTHON')
         sourceCodeTab.AddPage(sourcecode4, "PYTHON")
-    
+
         sourcecode5 = SourceCodeReport(sourceCodeTab, equation, 'JAVA')
         sourceCodeTab.AddPage(sourcecode5, "JAVA")
-    
+
         sourcecode6 = SourceCodeReport(sourceCodeTab, equation, 'JAVASCRIPT')
         sourceCodeTab.AddPage(sourcecode6, "JAVASCRIPT")
-    
+
         sourcecode7 = SourceCodeReport(sourceCodeTab, equation, 'SCILAB')
         sourceCodeTab.AddPage(sourcecode7, "SCILAB")
-    
+
         sourcecode8 = SourceCodeReport(sourceCodeTab, equation, 'MATLAB')
         sourceCodeTab.AddPage(sourcecode8, "MATLAB")
 
         # equation list
         dim = equation.GetDimensionality()
         equationList = EquationListReport(self, dim)
-        self.AddPage(equationList, "List Of Standard " + str(dim) + "D Equations")
+        self.AddPage(equationList, f"List Of Standard {str(dim)}D Equations")
 
 
 
@@ -606,9 +608,8 @@ class StatusDialog(wx.Dialog):
 if __name__ == "__main__":
     app = wx.App()
     import cPickle
-    f = open("pickledEquationFile", "rb")
-    unPickledEquation = cPickle.load(f)
-    f.close()
+    with open("pickledEquationFile", "rb") as f:
+        unPickledEquation = cPickle.load(f)
     os.remove("pickledEquationFile")
     resultsFrame = ResultsFrame(None, '', "Fitting Results (resizable dialog)", equation=unPickledEquation)
     resultsFrame.Show()

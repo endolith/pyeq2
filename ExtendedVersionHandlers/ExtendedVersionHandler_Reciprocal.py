@@ -19,11 +19,11 @@ from . import IExtendedVersionHandler
 class ExtendedVersionHandler_Reciprocal(IExtendedVersionHandler.IExtendedVersionHandler):
     
     def AssembleDisplayHTML(self, inModel):
-        return inModel._HTML + '<br>' + inModel._leftSideHTML + ' = 1.0 / ' + inModel._leftSideHTML
+        return f'{inModel._HTML}<br>{inModel._leftSideHTML} = 1.0 / {inModel._leftSideHTML}'
 
 
     def AssembleDisplayName(self, inModel):
-        return 'Reciprocal ' + inModel._baseName
+        return f'Reciprocal {inModel._baseName}'
 
 
     def AssembleSourceCodeName(self, inModel):

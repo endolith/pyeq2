@@ -50,15 +50,17 @@ class Base10Logarithmic(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []]
+        ]
+
         functionList.append([pyeq2.DataCache.DataCacheFunctions.Log10X(NameOrValueFlag=1), []])
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_Log10X = inDataCacheDictionary['Log10X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
 
@@ -70,8 +72,7 @@ class Base10Logarithmic(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a + b*log10(x_in);\n"
-        return s
+        return "\ttemp = a + b*log10(x_in);\n"
 
 
 
@@ -100,14 +101,16 @@ class Bradley(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.LogX(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.LogX(NameOrValueFlag=1), []]
+        ]
+
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_LogX = inDataCacheDictionary['LogX'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
 
@@ -119,8 +122,7 @@ class Bradley(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a * log(-1.0 * b * log(x_in));\n"
-        return s
+        return "\ttemp = a * log(-1.0 * b * log(x_in));\n"
 
 
 
@@ -149,14 +151,13 @@ class BradleyTransform(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -170,8 +171,7 @@ class BradleyTransform(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a * log(-1.0 * b * log(c * x_in + d));\n"
-        return s
+        return "\ttemp = a * log(-1.0 * b * log(c * x_in + d));\n"
 
 
 
@@ -200,14 +200,13 @@ class CrystalResonatorAgeing(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         A = inCoeffs[0]
         B = inCoeffs[1]
         f0 = inCoeffs[2]
@@ -220,8 +219,7 @@ class CrystalResonatorAgeing(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = A * (log(B * x_in + 1.0)) + f0;\n"
-        return s
+        return "\ttemp = A * (log(B * x_in + 1.0)) + f0;\n"
 
 
 
@@ -250,8 +248,10 @@ class CubicLogarithmic(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []]
+        ]
+
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LogX(NameOrValueFlag=1), []])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.PowLogX(NameOrValueFlag=1, args=[2.0]), [2.0]])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.PowLogX(NameOrValueFlag=1, args=[3.0]), [3.0]])
@@ -262,7 +262,7 @@ class CubicLogarithmic(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
         x_LogX = inDataCacheDictionary['LogX'] # only need to perform this dictionary look-up once
         x_PowLogX2 = inDataCacheDictionary['PowLogX_2.0'] # only need to perform this dictionary look-up once
         x_PowLogX3 = inDataCacheDictionary['PowLogX_3.0'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -276,8 +276,7 @@ class CubicLogarithmic(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a + b*log(x_in) + c*pow(log(x_in), 2.0) + d*pow(log(x_in), 3.0);\n"
-        return s
+        return "\ttemp = a + b*log(x_in) + c*pow(log(x_in), 2.0) + d*pow(log(x_in), 3.0);\n"
 
 
 
@@ -308,14 +307,13 @@ class CubicLogarithmicScaled(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -330,8 +328,7 @@ class CubicLogarithmicScaled(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a + b*log(f * x_in) + c*pow(log(f * x_in), 2.0) + d*pow(log(f * x_in), 3.0);\n"
-        return s
+        return "\ttemp = a + b*log(f * x_in) + c*pow(log(f * x_in), 2.0) + d*pow(log(f * x_in), 3.0);\n"
 
 
 
@@ -360,14 +357,13 @@ class CubicLogarithmicTransform(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -383,8 +379,7 @@ class CubicLogarithmicTransform(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a + b*log(f * x_in + g) + c*pow(log(f * x_in + g), 2.0) + d*pow(log(f * x_in + g), 3.0);\n"
-        return s
+        return "\ttemp = a + b*log(f * x_in + g) + c*pow(log(f * x_in + g), 2.0) + d*pow(log(f * x_in + g), 3.0);\n"
 
 
 
@@ -413,15 +408,17 @@ class LinearLogarithmic(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []]
+        ]
+
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LogX(NameOrValueFlag=1), []])
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_LogX = inDataCacheDictionary['LogX'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
 
@@ -433,8 +430,7 @@ class LinearLogarithmic(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a + b*log(x_in);\n"
-        return s
+        return "\ttemp = a + b*log(x_in);\n"
 
 
 
@@ -465,14 +461,13 @@ class LinearLogarithmicScaled(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -485,8 +480,7 @@ class LinearLogarithmicScaled(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a + b*log(c * x_in);\n"
-        return s
+        return "\ttemp = a + b*log(c * x_in);\n"
 
 
 
@@ -515,14 +509,13 @@ class LinearLogarithmicTransform(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -536,8 +529,7 @@ class LinearLogarithmicTransform(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a + b*log(c * x_in + d);\n"
-        return s
+        return "\ttemp = a + b*log(c * x_in + d);\n"
 
 
 
@@ -566,8 +558,10 @@ class QuadraticLogarithmic(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []]
+        ]
+
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LogX(NameOrValueFlag=1), []])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.PowLogX(NameOrValueFlag=1, args=[2.0]), [2.0]])
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
@@ -576,7 +570,7 @@ class QuadraticLogarithmic(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_LogX = inDataCacheDictionary['LogX'] # only need to perform this dictionary look-up once
         x_PowLogX2 = inDataCacheDictionary['PowLogX_2.0'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -589,8 +583,7 @@ class QuadraticLogarithmic(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a + b*log(x_in) + c*pow(log(x_in), 2.0);\n"
-        return s
+        return "\ttemp = a + b*log(x_in) + c*pow(log(x_in), 2.0);\n"
 
 
 
@@ -621,14 +614,13 @@ class QuadraticLogarithmicScaled(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -642,8 +634,7 @@ class QuadraticLogarithmicScaled(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a + b*log(d * x_in) + c*pow(log(d * x_in), 2.0);\n"
-        return s
+        return "\ttemp = a + b*log(d * x_in) + c*pow(log(d * x_in), 2.0);\n"
 
 
 
@@ -672,14 +663,13 @@ class QuadraticLogarithmicTransform(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass)
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -694,8 +684,7 @@ class QuadraticLogarithmicTransform(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass)
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a + b*log(d * x_in + f) + c*pow(log(d * x_in + f), 2.0);\n"
-        return s
+        return "\ttemp = a + b*log(d * x_in + f) + c*pow(log(d * x_in + f), 2.0);\n"
 
 
 
@@ -724,8 +713,10 @@ class QuarticLogarithmic(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []]
+        ]
+
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LogX(NameOrValueFlag=1), []])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.PowLogX(NameOrValueFlag=1, args=[2.0]), [2.0]])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.PowLogX(NameOrValueFlag=1, args=[3.0]), [3.0]])
@@ -738,7 +729,7 @@ class QuarticLogarithmic(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
         x_PowLogX2 = inDataCacheDictionary['PowLogX_2.0'] # only need to perform this dictionary look-up once
         x_PowLogX3 = inDataCacheDictionary['PowLogX_3.0'] # only need to perform this dictionary look-up once
         x_PowLogX4 = inDataCacheDictionary['PowLogX_4.0'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -753,8 +744,7 @@ class QuarticLogarithmic(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a + b*log(x_in) + c*pow(log(x_in), 2.0) + d*pow(log(x_in), 3.0) + f*pow(log(x_in), 4.0);\n"
-        return s
+        return "\ttemp = a + b*log(x_in) + c*pow(log(x_in), 2.0) + d*pow(log(x_in), 3.0) + f*pow(log(x_in), 4.0);\n"
 
 
 
@@ -785,14 +775,13 @@ class QuarticLogarithmicScaled(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -808,8 +797,7 @@ class QuarticLogarithmicScaled(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a + b*log(g * x_in) + c*pow(log(g * x_in), 2.0) + d*pow(log(g * x_in), 3.0) + f*pow(log(g * x_in), 4.0);\n"
-        return s
+        return "\ttemp = a + b*log(g * x_in) + c*pow(log(g * x_in), 2.0) + d*pow(log(g * x_in), 3.0) + f*pow(log(g * x_in), 4.0);\n"
 
 
 
@@ -838,14 +826,13 @@ class QuarticLogarithmicTransform(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -862,8 +849,7 @@ class QuarticLogarithmicTransform(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a + b*log(g * x_in + h) + c*pow(log(g * x_in + h), 2.0) + d*pow(log(g * x_in + h), 3.0) + f*pow(log(g * x_in + h), 4.0);\n"
-        return s
+        return "\ttemp = a + b*log(g * x_in + h) + c*pow(log(g * x_in + h), 2.0) + d*pow(log(g * x_in + h), 3.0) + f*pow(log(g * x_in + h), 4.0);\n"
 
 
 
@@ -892,8 +878,10 @@ class QuinticLogarithmic(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []])
+        functionList = [
+            [pyeq2.DataCache.DataCacheFunctions.Ones(NameOrValueFlag=1), []]
+        ]
+
         functionList.append([pyeq2.DataCache.DataCacheFunctions.LogX(NameOrValueFlag=1), []])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.PowLogX(NameOrValueFlag=1, args=[2.0]), [2.0]])
         functionList.append([pyeq2.DataCache.DataCacheFunctions.PowLogX(NameOrValueFlag=1, args=[3.0]), [3.0]])
@@ -908,7 +896,7 @@ class QuinticLogarithmic(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
         x_PowLogX3 = inDataCacheDictionary['PowLogX_3.0'] # only need to perform this dictionary look-up once
         x_PowLogX4 = inDataCacheDictionary['PowLogX_4.0'] # only need to perform this dictionary look-up once
         x_PowLogX5 = inDataCacheDictionary['PowLogX_5.0'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -924,8 +912,7 @@ class QuinticLogarithmic(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a + b*log(x_in) + c*pow(log(x_in), 2.0) + d*pow(log(x_in), 3.0) + f*pow(log(x_in), 4.0) + g*pow(log(x_in), 5.0);\n"
-        return s
+        return "\ttemp = a + b*log(x_in) + c*pow(log(x_in), 2.0) + d*pow(log(x_in), 3.0) + f*pow(log(x_in), 4.0) + g*pow(log(x_in), 5.0);\n"
 
 
 
@@ -956,14 +943,13 @@ class QuinticLogarithmicScaled(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -980,8 +966,7 @@ class QuinticLogarithmicScaled(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a + b*log(h * x_in) + c*pow(log(h * x_in), 2.0) + d*pow(log(h * x_in), 3.0) + f*pow(log(h * x_in), 4.0) + g*pow(log(h * x_in), 5.0);\n"
-        return s
+        return "\ttemp = a + b*log(h * x_in) + c*pow(log(h * x_in), 2.0) + d*pow(log(h * x_in), 3.0) + f*pow(log(h * x_in), 4.0) + g*pow(log(h * x_in), 5.0);\n"
 
 
 
@@ -1010,14 +995,13 @@ class QuinticLogarithmicTransform(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
     
 
     def GetDataCacheFunctions(self):
-        functionList = []
-        functionList.append([pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []])
+        functionList = [[pyeq2.DataCache.DataCacheFunctions.X(NameOrValueFlag=1), []]]
         return self.extendedVersionHandler.GetAdditionalDataCacheFunctions(self, functionList)
 
 
     def CalculateModelPredictions(self, inCoeffs, inDataCacheDictionary):
         x_in = inDataCacheDictionary['X'] # only need to perform this dictionary look-up once
-        
+
         a = inCoeffs[0]
         b = inCoeffs[1]
         c = inCoeffs[2]
@@ -1035,8 +1019,7 @@ class QuinticLogarithmicTransform(pyeq2.Model_2D_BaseClass.Model_2D_BaseClass):
 
 
     def SpecificCodeCPP(self):
-        s = "\ttemp = a + b*log(h * x_in + i) + c*pow(log(h * x_in + i), 2.0) + d*pow(log(h * x_in + i), 3.0) + f*pow(log(h * x_in + i), 4.0) + g*pow(log(h * x_in + i), 5.0);\n"
-        return s
+        return "\ttemp = a + b*log(h * x_in + i) + c*pow(log(h * x_in + i), 2.0) + d*pow(log(h * x_in + i), 3.0) + f*pow(log(h * x_in + i), 4.0) + g*pow(log(h * x_in + i), 5.0);\n"
 
 
 

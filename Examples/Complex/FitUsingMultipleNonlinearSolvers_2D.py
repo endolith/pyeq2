@@ -6,12 +6,12 @@ from __future__ import generators
 import os, sys, inspect, copy
 
 # ensure pyeq2 can be imported
-if -1 != sys.path[0].find('pyeq2-master'):raise Exception('Please rename git checkout directory from "pyeq2-master" to "pyeq2"')
+if sys.path[0].find('pyeq2-master') != -1:raise Exception('Please rename git checkout directory from "pyeq2-master" to "pyeq2"')
 exampleFileDirectory = sys.path[0][:sys.path[0].rfind(os.sep)]
 pyeq2IimportDirectory =  os.path.join(os.path.join(exampleFileDirectory, '..'), '..')
 if pyeq2IimportDirectory not in sys.path:
     sys.path.append(pyeq2IimportDirectory)
-    
+
 import pyeq2
 
 
@@ -19,9 +19,7 @@ import pyeq2
 def ResultListSortFunction(a, b): # utility function
     if a[3] < b[3]:
         return -1
-    if a[3] > b[3]:
-        return 1
-    return 0
+    return 1 if a[3] > b[3] else 0
 
 def UniqueCombinations(items, n): # utility function
     if n==0:
@@ -53,14 +51,22 @@ def SetParametersAndFit(inEquation, inBestResult, inPrintStatus, inFittingAlgori
 
         if inPrintStatus and inFittingAlgorithmName == 'Levenberg-Marquardt':
             print('Fitting', inEquation.__module__, "'" + inEquation.GetDisplayName() + "'")
-        
+
         inEquation.Solve(inNonLinearSolverAlgorithmName=inFittingAlgorithmName)
-        
+
         target = inEquation.CalculateAllDataFittingTarget(inEquation.solvedCoefficients)
         if target > 1.0E290: # error too large
             return None
     except:
-        print("Exception in " + inEquation.__class__.__name__ + '\n' + str(sys.exc_info()[0]) + '\n' + str(sys.exc_info()[1]) + '\n')
+        print(
+            f"Exception in {inEquation.__class__.__name__}"
+            + '\n'
+            + str(sys.exc_info()[0])
+            + '\n'
+            + str(sys.exc_info()[1])
+            + '\n'
+        )
+
         return None
 
     if (not inBestResult) or (target < inBestResult[3]):
@@ -74,7 +80,7 @@ def SetParametersAndFit(inEquation, inBestResult, inPrintStatus, inFittingAlgori
         t7 = copy.deepcopy(inEquation.rationalNumeratorFlags)
         t8 = copy.deepcopy(inEquation.rationalDenominatorFlags)
         t9 = inFittingAlgorithmName
-    
+
         return [t0,t1,t2,t3,t4,t5,t6,t7,t8, t9]
     return None
 
@@ -133,28 +139,28 @@ for submodule in inspect.getmembers(pyeq2.Models_2D):
                    equationClass[1].userSelectableRationalFlag or \
                    equationClass[1].userDefinedFunctionFlag:
                     continue
-                
+
                 for extendedVersion in ['Default', 'Offset']:
-                    
+
                     if (extendedVersion == 'Offset') and (equationClass[1].autoGenerateOffsetForm == False):
                         continue
-                    
+
                     deEstimatedCoefficients = []
                     for fittingAlgorithmName in pyeq2.solverService.ListOfNonLinearSolverAlgorithmNames:
                         equationInstance = equationClass[1](fittingTargetText, extendedVersion)
-                        
+
                         # reject equations that use linear solvers for this fitting target
                         if equationInstance.CanLinearSolverBeUsedForSSQABS() == True and fittingTargetText == 'SSQABS':
                             continue
-    
+
                         if len(equationInstance.GetCoefficientDesignators()) > smoothnessControl:
                             continue
-    
+
                         equationInstance.dataCache = externalCache # re-use the external cache
-                        
+
                         if equationInstance.dataCache.allDataCacheDictionary == {}:
                             pyeq2.dataConvertorService().ConvertAndSortColumnarASCII(rawData, equationInstance, False)
-                            
+
                         equationInstance.dataCache.CalculateNumberOfReducedDataPoints(equationInstance)
                         if reducedDataCache.has_key(equationInstance.numberOfReducedDataPoints):
                             equationInstance.dataCache.reducedDataCacheDictionary = reducedDataCache[equationInstance.numberOfReducedDataPoints]
@@ -164,7 +170,7 @@ for submodule in inspect.getmembers(pyeq2.Models_2D):
                         equationInstance.deEstimatedCoefficients = deEstimatedCoefficients
 
                         result = SetParametersAndFit(equationInstance, bestResult, True, fittingAlgorithmName)
-                        
+
                         deEstimatedCoefficients = equationInstance.deEstimatedCoefficients # no need to re-run DE
 
                         if result:
@@ -172,7 +178,7 @@ for submodule in inspect.getmembers(pyeq2.Models_2D):
                             if bestResult[9] != 'Levenberg-Marquardt':
                                 print('The', bestResult[9], 'algorithm yielded better results than Levenberg-Marquardt on this data set for a fitting target of', fittingTargetText)
                                 print()
-                    
+
                         if not reducedDataCache.has_key(equationInstance.numberOfReducedDataPoints):
                             reducedDataCache[equationInstance.numberOfReducedDataPoints] = equationInstance.dataCache.reducedDataCacheDictionary
 
@@ -190,35 +196,35 @@ functionIndexList = range(len(polyfunctionalEquationList)) # make a list of func
 for coeffCount in range(1, maxPolyfunctionalCoefficients+1):
     functionCombinations = UniqueCombinations(functionIndexList, coeffCount)
     for functionCombination in functionCombinations:
-        
+
         if len(functionCombination) > smoothnessControl:
             continue
-            
+
         deEstimatedCoefficients = []
         for fittingAlgorithmName in pyeq2.solverService.ListOfNonLinearSolverAlgorithmNames:
             equationInstance = pyeq2.Models_2D.Polyfunctional.UserSelectablePolyfunctional(fittingTargetText, 'Default', functionCombination, polyfunctionalEquationList)
-    
+
             # reject equations that use linear solvers for this fitting target
             if equationInstance.CanLinearSolverBeUsedForSSQABS() == True and fittingTargetText == 'SSQABS':
                 continue
 
             equationInstance.dataCache = externalCache # re-use the external cache
-            
+
             if equationInstance.dataCache.allDataCacheDictionary == {}:
                 pyeq2.dataConvertorService().ConvertAndSortColumnarASCII(rawData, equationInstance, False)
-                
+
             equationInstance.dataCache.CalculateNumberOfReducedDataPoints(equationInstance)
             if reducedDataCache.has_key(equationInstance.numberOfReducedDataPoints):
                 equationInstance.dataCache.reducedDataCacheDictionary = reducedDataCache[equationInstance.numberOfReducedDataPoints]
             else:
                 equationInstance.dataCache.reducedDataCacheDictionary = {}
-    
+
             equationInstance.deEstimatedCoefficients = deEstimatedCoefficients
-            
+
             result = SetParametersAndFit(equationInstance, bestResult, False, fittingAlgorithmName)
-            
+
             deEstimatedCoefficients = equationInstance.deEstimatedCoefficients # no need to re-run DE
-            
+
             if result:
                 bestResult = result
                 if bestResult[9] != 'Levenberg-Marquardt':
@@ -227,7 +233,7 @@ for coeffCount in range(1, maxPolyfunctionalCoefficients+1):
 
             if not reducedDataCache.has_key(equationInstance.numberOfReducedDataPoints):
                 reducedDataCache[equationInstance.numberOfReducedDataPoints] = equationInstance.dataCache.reducedDataCacheDictionary
-        
+
         equationCount += 1
         if (equationCount % 250) == 0:
             print('    ', equationCount, '...')
@@ -241,33 +247,33 @@ print('Fitting user-selectable polynomials that use non-linear solvers for a fit
 maxPolynomialOrderX = 5 # this value was chosen to make this example more convenient
 
 for polynomialOrderX in range(maxPolynomialOrderX+1):
-    
+
     if (polynomialOrderX + 1) > smoothnessControl:
         continue
 
     deEstimatedCoefficients = []
     for fittingAlgorithmName in pyeq2.solverService.ListOfNonLinearSolverAlgorithmNames:
         equationInstance = pyeq2.Models_2D.Polynomial.UserSelectablePolynomial(fittingTargetText, 'Default', polynomialOrderX)
-                
+
         # reject equations that use linear solvers for this fitting target
         if equationInstance.CanLinearSolverBeUsedForSSQABS() == True and fittingTargetText == 'SSQABS':
             continue
 
         equationInstance.dataCache = externalCache # re-use the external cache
-    
+
         if equationInstance.dataCache.allDataCacheDictionary == {}:
             pyeq2.dataConvertorService().ConvertAndSortColumnarASCII(rawData, equationInstance, False)
-            
+
         equationInstance.dataCache.CalculateNumberOfReducedDataPoints(equationInstance)
         if reducedDataCache.has_key(equationInstance.numberOfReducedDataPoints):
             equationInstance.dataCache.reducedDataCacheDictionary = reducedDataCache[equationInstance.numberOfReducedDataPoints]
         else:
             equationInstance.dataCache.reducedDataCacheDictionary = {}
-    
+
         equationInstance.deEstimatedCoefficients = deEstimatedCoefficients
-        
+
         result = SetParametersAndFit(equationInstance, bestResult, False, fittingAlgorithmName)
-        
+
         deEstimatedCoefficients = equationInstance.deEstimatedCoefficients # no need to re-run DE
 
         if result:
@@ -296,37 +302,37 @@ for numeratorCoeffCount in range(1, maxCoeffs):
         for denominatorCoeffCount in range(1, maxCoeffs):
             denominatorComboList = UniqueCombinations2(functionIndexList, denominatorCoeffCount)
             for denominatorCombo in denominatorComboList:
-                
+
                 for extendedVersion in ['Default', 'Offset']:
-                    
+
                     extraCoeffs = 0
                     if extendedVersion == 'Offset':
                         extraCoeffs = 1
-                        
+
                     if (len(numeratorCombo) + len(denominatorCombo) + extraCoeffs) > smoothnessControl:
                         continue
-                    
+
                     deEstimatedCoefficients = []
                     for fittingAlgorithmName in pyeq2.solverService.ListOfNonLinearSolverAlgorithmNames:
                         equationInstance = pyeq2.Models_2D.Rational.UserSelectableRational(fittingTargetText, extendedVersion, numeratorCombo, denominatorCombo, functionList)
-                        
+
                         # reject equations that use linear solvers for this fitting target
                         if equationInstance.CanLinearSolverBeUsedForSSQABS() == True and fittingTargetText == 'SSQABS':
                             continue
-                                        
+
                         equationInstance.dataCache = externalCache # re-use the external cache
-                        
+
                         if equationInstance.dataCache.allDataCacheDictionary == {}:
                             pyeq2.dataConvertorService().ConvertAndSortColumnarASCII(rawData, equationInstance, False)
-                            
+
                         equationInstance.dataCache.CalculateNumberOfReducedDataPoints(equationInstance)
                         if reducedDataCache.has_key(equationInstance.numberOfReducedDataPoints):
                             equationInstance.dataCache.reducedDataCacheDictionary = reducedDataCache[equationInstance.numberOfReducedDataPoints]
                         else:
                             equationInstance.dataCache.reducedDataCacheDictionary = {}
-        
+
                         equationInstance.deEstimatedCoefficients = deEstimatedCoefficients
-                        
+
                         result = SetParametersAndFit(equationInstance, bestResult, False, fittingAlgorithmName)
 
                         deEstimatedCoefficients = equationInstance.deEstimatedCoefficients # no need to re-run DE
@@ -336,10 +342,10 @@ for numeratorCoeffCount in range(1, maxCoeffs):
                             if bestResult[9] != 'Levenberg-Marquardt':
                                 print('The', bestResult[9], 'algorithm yielded better results than Levenberg-Marquardt on this data set for a fitting target of', fittingTargetText)
                                 print()
-                    
+
                         if not reducedDataCache.has_key(equationInstance.numberOfReducedDataPoints):
                             reducedDataCache[equationInstance.numberOfReducedDataPoints] = equationInstance.dataCache.reducedDataCacheDictionary
-    
+
                     equationCount += 1
                     if (equationCount % 5) == 0:
                         print('    ', equationCount, 'rationals, current flags:', equationInstance.rationalNumeratorFlags, equationInstance.rationalDenominatorFlags,)

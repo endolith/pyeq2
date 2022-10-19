@@ -4,12 +4,12 @@ import wx # ensure this import works before starting the application
 import matplotlib # ensure this import works before starting the application
 
 # ensure pyeq2 can be imported before starting the application
-if -1 != sys.path[0].find('pyeq2-master'):raise Exception('Please rename git checkout directory from "pyeq2-master" to "pyeq2"')
+if sys.path[0].find('pyeq2-master') != -1:raise Exception('Please rename git checkout directory from "pyeq2-master" to "pyeq2"')
 exampleFileDirectory = sys.path[0][:sys.path[0].rfind(os.sep)]
 pyeq2IimportDirectory =  os.path.join(os.path.join(exampleFileDirectory, '..'), '..')
 if pyeq2IimportDirectory not in sys.path:
     sys.path.append(pyeq2IimportDirectory)
-    
+
 import pyeq2
 
 # local imports from application subdirectory
@@ -108,12 +108,9 @@ class ApplicationFrame(wx.Frame):
             self.statusBox.text.AppendText(event.data + "\n")
         else: # not string data type, the worker thread completed
             self.fittingWorkerThread = None
-            
-            # event.data will be the fitted equation
-            pickledEquationFile = open("pickledEquationFile", "wb")
-            cPickle.dump(event.data, pickledEquationFile)
-            pickledEquationFile.close()
-            
+
+            with open("pickledEquationFile", "wb") as pickledEquationFile:
+                cPickle.dump(event.data, pickledEquationFile)
             self.btnFit2D.Enable()
             self.btnFit3D.Enable()
             self.statusBox.Hide()
@@ -121,14 +118,14 @@ class ApplicationFrame(wx.Frame):
             currentDirectory = os.path.dirname(os.path.abspath(__file__))
             dialogDirectory = os.path.join(currentDirectory, 'guifiles')
             commandString = os.path.join(dialogDirectory, 'CustomDialogs.py')
-            os.popen(sys.executable + ' ' + commandString)
+            os.popen(f'{sys.executable} {commandString}')
 
 
     def OnFit2D(self, evt):
         textData = str(self.text_2D.GetValue())
         equationSelection = self.rbEqChoice_2D.GetStringSelection()
         fittingTargetSelection = self.rbFittingTargetChoice_2D.GetStringSelection()
-        
+
         # the GUI's fitting target string contains what we need - extract it
         fittingTarget = fittingTargetSelection.split('(')[1].split(')')[0]
 
@@ -158,9 +155,13 @@ class ApplicationFrame(wx.Frame):
         coeffCount = len(self.equation.GetCoefficientDesignators())
         dataCount = len(self.equation.dataCache.allDataCacheDictionary['DependentData'])
         if coeffCount > dataCount:
-            wx.MessageBox("This equation requires a minimum of " + str(coeffCount) + " data points, you have supplied " + repr(dataCount) + ".", "Error")
+            wx.MessageBox(
+                f"This equation requires a minimum of {coeffCount} data points, you have supplied {repr(dataCount)}.",
+                "Error",
+            )
+
             return
-        
+
         # Now the status dialog is used. Disable fitting buttons until thread completes
         self.btnFit2D.Disable()
         self.btnFit3D.Disable()
@@ -175,7 +176,7 @@ class ApplicationFrame(wx.Frame):
         textData = str(self.text_3D.GetValue())
         equationSelection = self.rbEqChoice_3D.GetStringSelection()
         fittingTargetSelection = self.rbFittingTargetChoice_3D.GetStringSelection()
-        
+
         # the GUI's fitting target string contains what we need - extract it
         fittingTarget = fittingTargetSelection.split('(')[1].split(')')[0]
 
@@ -205,7 +206,11 @@ class ApplicationFrame(wx.Frame):
         coeffCount = len(self.equation.GetCoefficientDesignators())
         dataCount = len(self.equation.dataCache.allDataCacheDictionary['DependentData'])
         if coeffCount > dataCount:
-            wx.MessageBox("This equation requires a minimum of " + str(coeffCount) + " data points, you have supplied " + repr(dataCount) + ".", "Error")
+            wx.MessageBox(
+                f"This equation requires a minimum of {coeffCount} data points, you have supplied {repr(dataCount)}.",
+                "Error",
+            )
+
             return
 
         # Now the status dialog is used. Disable fitting buttons until thread completes
@@ -213,7 +218,7 @@ class ApplicationFrame(wx.Frame):
         self.btnFit3D.Disable()
         self.statusBox.text.SetValue('')
         self.statusBox.Show() # hidden by OnThreadStatus() when thread completes
-    
+
         # thread will automatically start to run
         self.fittingWorkerThread = CustomThreads.FittingThread(self, self.equation)
 

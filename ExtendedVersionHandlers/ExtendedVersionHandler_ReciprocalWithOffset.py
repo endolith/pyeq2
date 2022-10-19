@@ -19,11 +19,11 @@ from . import IExtendedVersionHandler
 class ExtendedVersionHandler_ReciprocalWithOffset(IExtendedVersionHandler.IExtendedVersionHandler):
     
     def AssembleDisplayHTML(self, inModel):
-        return inModel._HTML + '<br>' + inModel._leftSideHTML + ' = 1.0 / ' + inModel._leftSideHTML + ' + Offset'
+        return f'{inModel._HTML}<br>{inModel._leftSideHTML} = 1.0 / {inModel._leftSideHTML} + Offset'
 
 
     def AssembleDisplayName(self, inModel):
-        return 'Reciprocal ' + inModel._baseName + ' With Offset'
+        return f'Reciprocal {inModel._baseName} With Offset'
 
 
     def AssembleSourceCodeName(self, inModel):

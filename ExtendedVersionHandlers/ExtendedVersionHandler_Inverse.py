@@ -20,13 +20,14 @@ class ExtendedVersionHandler_Inverse(IExtendedVersionHandler.IExtendedVersionHan
     
     def AssembleDisplayHTML(self, inModel):
         if inModel.GetDimensionality() == 2:
-            return inModel._HTML + '<br>' + inModel._leftSideHTML + ' = x / ' + inModel._leftSideHTML
+            return f'{inModel._HTML}<br>{inModel._leftSideHTML} = x / {inModel._leftSideHTML}'
+
         else:
-            return inModel._HTML + '<br>' + inModel._leftSideHTML + ' = xy / ' + inModel._leftSideHTML
+            return f'{inModel._HTML}<br>{inModel._leftSideHTML} = xy / {inModel._leftSideHTML}'
 
 
     def AssembleDisplayName(self, inModel):
-        return'Inverse ' + inModel._baseName
+        return f'Inverse {inModel._baseName}'
 
 
     def AssembleSourceCodeName(self, inModel):

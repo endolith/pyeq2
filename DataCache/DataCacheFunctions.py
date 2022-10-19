@@ -25,15 +25,11 @@ def Ones(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
    
 
 def X(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
-    if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name
-    return data[0]
+    return sys._getframe().f_code.co_name if NameOrValueFlag else data[0]
 
 
 def NegX(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
-    if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name
-    return -1.0 * data[0]
+    return sys._getframe().f_code.co_name if NameOrValueFlag else -1.0 * data[0]
 
 
 def RecipX(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
@@ -46,15 +42,11 @@ def RecipX(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
 
 
 def Y(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
-    if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name
-    return data[1]
+    return sys._getframe().f_code.co_name if NameOrValueFlag else data[1]
 
    
 def NegY(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
-    if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name
-    return -1.0 * data[1]
+    return sys._getframe().f_code.co_name if NameOrValueFlag else -1.0 * data[1]
 
 
 def RecipY(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
@@ -86,7 +78,7 @@ def Pow2SinX(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
 
 def SinMultX(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
     if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name + '_' + str(args[0])
+        return f'{sys._getframe().f_code.co_name}_{str(args[0])}'
     try:
         return numpy.sin(data[0] * args[0])
     except:
@@ -95,7 +87,7 @@ def SinMultX(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
 
 def CosMultX(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
     if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name + '_' + str(args[0])
+        return f'{sys._getframe().f_code.co_name}_{str(args[0])}'
     try:
         return numpy.cos(data[0] * args[0])
     except:
@@ -167,7 +159,7 @@ def Log10X(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
 
 def PowX(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
     if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name + '_' + str(args[0])
+        return f'{sys._getframe().f_code.co_name}_{str(args[0])}'
     try:
         return numpy.power(data[0], args[0])
     except:
@@ -176,7 +168,7 @@ def PowX(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
 
 def PowLogX(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
     if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name + '_' + str(args[0])
+        return f'{sys._getframe().f_code.co_name}_{str(args[0])}'
     try:
         return numpy.power(numpy.log(data[0]), args[0])
     except:
@@ -185,7 +177,7 @@ def PowLogX(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
 
 def PowExpX(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
     if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name + '_' + str(args[0])
+        return f'{sys._getframe().f_code.co_name}_{str(args[0])}'
     try:
         return  numpy.power(numpy.exp(data[0]), args[0])
     except:
@@ -194,7 +186,7 @@ def PowExpX(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
 
 def Polyfunctional2D(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
     if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name + '_' + str(args)
+        return f'{sys._getframe().f_code.co_name}_{str(args)}'
     try:
         return eqInstance.polyfunctionalEquationList[args].value(data[0])
     except:
@@ -203,7 +195,7 @@ def Polyfunctional2D(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
 
 def Polynomial2D(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
     if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name + '_' + str(args)
+        return f'{sys._getframe().f_code.co_name}_{str(args)}'
     try:
         return eqInstance.polynomialEquationList[args].value(data[0])
     except:
@@ -212,7 +204,7 @@ def Polynomial2D(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
 
 def Rational2D(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
     if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name + '_' + str(args)
+        return f'{sys._getframe().f_code.co_name}_{str(args)}'
     try:
         return eqInstance.rationalEquationList[args].value(data[0])
     except:
@@ -357,7 +349,7 @@ def ExpY(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
 
 def Polyfunctional3D(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
     if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name + '_' + str(args)
+        return f'{sys._getframe().f_code.co_name}_{str(args)}'
     try:
         return eqInstance.polyfunctionalEquationList_X[args[0]].value(data[0]) * eqInstance.polyfunctionalEquationList_Y[args[1]].value(data[1])
     except:
@@ -366,7 +358,7 @@ def Polyfunctional3D(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
 
 def PowLogY(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
     if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name + '_' + str(args[0])
+        return f'{sys._getframe().f_code.co_name}_{str(args[0])}'
     try:
         return numpy.power(numpy.log(data[1]), args[0])
     except:
@@ -375,7 +367,7 @@ def PowLogY(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
 
 def PowExpY(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
     if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name + '_' + str(args[0])
+        return f'{sys._getframe().f_code.co_name}_{str(args[0])}'
     try:
         return numpy.power(numpy.exp(data[1]), args[0])
     except:
@@ -384,7 +376,7 @@ def PowExpY(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
 
 def PowX_PowY(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
     if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name + '_' + str(args[0]) + str(args[1])
+        return f'{sys._getframe().f_code.co_name}_{str(args[0])}{str(args[1])}'
     try:
         return numpy.power(data[0], args[0]) * numpy.power(data[1], args[1])
     except:
@@ -393,7 +385,7 @@ def PowX_PowY(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
 
 def PowLogX_PowLogY(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
     if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name + '_' + str(args[0]) + str(args[1])
+        return f'{sys._getframe().f_code.co_name}_{str(args[0])}{str(args[1])}'
     try:
         return numpy.power(numpy.log(data[0]), args[0]) * numpy.power(numpy.log(data[1]), args[1])
     except:
@@ -402,7 +394,7 @@ def PowLogX_PowLogY(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
 
 def PowExpX_PowExpY(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
     if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name + '_' + str(args[0]) + str(args[1])
+        return f'{sys._getframe().f_code.co_name}_{str(args[0])}{str(args[1])}'
     try:
         return numpy.power(numpy.exp(data[0]), args[0]) * numpy.power(numpy.exp(data[1]), args[1])
     except:
@@ -411,7 +403,7 @@ def PowExpX_PowExpY(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
 
 def PowX_PowLogY(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
     if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name + '_' + str(args[0]) + str(args[1])
+        return f'{sys._getframe().f_code.co_name}_{str(args[0])}{str(args[1])}'
     try:
         return numpy.power(data[0], args[0]) * numpy.power(numpy.log(data[1]), args[1])
     except:
@@ -420,7 +412,7 @@ def PowX_PowLogY(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
 
 def PowLogX_PowY(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
     if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name + '_' + str(args[0]) + str(args[1])
+        return f'{sys._getframe().f_code.co_name}_{str(args[0])}{str(args[1])}'
     try:
         return numpy.power(numpy.log(data[0]), args[0]) * numpy.power(data[1], args[1])
     except:
@@ -429,7 +421,7 @@ def PowLogX_PowY(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
 
 def PowY(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
     if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name + '_' + str(args[0])
+        return f'{sys._getframe().f_code.co_name}_{str(args[0])}'
     try:
         return numpy.power(data[1], args[0])
     except:
@@ -629,10 +621,10 @@ def LogX_Y(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
 def LegendreX(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
     n = args[0]
     cosineFlag = args[1]
-   
+
     if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name + '_' + str(n)
-           
+        return f'{sys._getframe().f_code.co_name}_{str(n)}'
+
     try:
         if cosineFlag == 1: # convert degrees to radians
             data = numpy.cos(numpy.radians(data[0]))
@@ -664,25 +656,28 @@ def LegendreX(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
         elif n == 10:
             return (1.0 / 256.0) * (46189.0*numpy.power(data, 10.0) - 109395.0*numpy.power(data, 8.0) + 90090.0*numpy.power(data, 6.0) - 30030.0*numpy.power(data, 4.0) + 3465.0*numpy.power(data, 2.0) - 63.0)
         else:
-            raise Exception("Legendre Polynomial Degree of " + str(n) + " is too high, please use a degree of 10 or less.") # will be trapped
-           
+            raise Exception(
+                f"Legendre Polynomial Degree of {str(n)} is too high, please use a degree of 10 or less."
+            )
+
+
     except:
         return 1.0E300 * numpy.ones_like(data[0])
 
 
 def LegendreCosineDegreesX(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
     n = args[0]
-   
+
     if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name + '_' + str(n)
+        return f'{sys._getframe().f_code.co_name}_{str(n)}'
     else:
         return LegendreX(data=data, args = [n, 1], eqInstance=eqInstance, NameOrValueFlag=NameOrValueFlag)
 
 
 def LegendreCosineRadiansX(data=None, args=None, eqInstance=None, NameOrValueFlag=0):
     n = args[0]
-   
+
     if NameOrValueFlag: # name used by cache, must be distinct
-        return sys._getframe().f_code.co_name + '_' + str(n)
+        return f'{sys._getframe().f_code.co_name}_{str(n)}'
     else:
         return LegendreX(data=data, args = [n, 2], eqInstance=eqInstance, NameOrValueFlag=NameOrValueFlag)

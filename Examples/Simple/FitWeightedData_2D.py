@@ -5,12 +5,12 @@ from __future__ import absolute_import
 import os, sys, inspect
 
 # ensure pyeq2 can be imported
-if -1 != sys.path[0].find('pyeq2-master'):raise Exception('Please rename git checkout directory from "pyeq2-master" to "pyeq2"')
+if sys.path[0].find('pyeq2-master') != -1:raise Exception('Please rename git checkout directory from "pyeq2-master" to "pyeq2"')
 exampleFileDirectory = sys.path[0][:sys.path[0].rfind(os.sep)]
 pyeq2IimportDirectory =  os.path.join(os.path.join(exampleFileDirectory, '..'), '..')
 if pyeq2IimportDirectory not in sys.path:
     sys.path.append(pyeq2IimportDirectory)
-    
+
 import pyeq2
 
 
@@ -38,7 +38,12 @@ equation.Solve()
 ##########################################################
 
 
-print("Equation:", equation.GetDisplayName(), str(equation.GetDimensionality()) + "D")
+print(
+    "Equation:",
+    equation.GetDisplayName(),
+    f"{str(equation.GetDimensionality())}D",
+)
+
 print("Fitting target of", equation.fittingTargetDictionary[equation.fittingTarget], '=', equation.CalculateAllDataFittingTarget(equation.solvedCoefficients))
 print("Fitted Parameters:")
 for i in range(len(equation.solvedCoefficients)):
@@ -73,42 +78,42 @@ if equation.upperCoefficientBounds or equation.lowerCoefficientBounds:
 print('Degress of freedom error',  equation.df_e_weighted)
 print('Degress of freedom regression',  equation.df_r_weighted)
 
-if equation.rmse_weighted == None:
+if equation.rmse_weighted is None:
     print('Root Mean Squared Error (RMSE) (weighted): n/a')
 else:
     print('Root Mean Squared Error (RMSE) (weighted):',  equation.rmse_weighted)
 
-if equation.r2_weighted == None:
+if equation.r2_weighted is None:
     print('R-squared (weighted): n/a')
 else:
     print('R-squared (weighted):',  equation.r2_weighted)
 
-if equation.r2adj_weighted == None:
+if equation.r2adj_weighted is None:
     print('R-squared adjusted (weighted): n/a')
 else:
     print('R-squared adjusted (weighted):',  equation.r2adj_weighted)
 
-if equation.Fstat_weighted == None:
+if equation.Fstat_weighted is None:
     print('Model F-statistic (weighted): n/a')
 else:
     print('Model F-statistic (weighted):',  equation.Fstat_weighted)
 
-if equation.Fpv_weighted == None:
+if equation.Fpv_weighted is None:
     print('Model F-statistic p-value (weighted): n/a')
 else:
     print('Model F-statistic p-value (weighted):',  equation.Fpv_weighted)
 
-if equation.ll_weighted == None:
+if equation.ll_weighted is None:
     print('Model log-likelihood (weighted): n/a')
 else:
     print('Model log-likelihood (weighted):',  equation.ll_weighted)
 
-if equation.aic_weighted == None:
+if equation.aic_weighted is None:
     print('Model AIC (weighted): n/a')
 else:
     print('Model AIC (weighted):',  equation.aic_weighted)
 
-if equation.bic_weighted == None:
+if equation.bic_weighted is None:
     print('Model BIC (weighted): n/a')
 else:
     print('Model BIC (weighted):',  equation.bic_weighted)
@@ -117,20 +122,20 @@ else:
 print()
 print("Individual Parameter Statistics:")
 for i in range(len(equation.solvedCoefficients)):
-    if equation.tstat_beta_weighted == None:
+    if equation.tstat_beta_weighted is None:
         tstat = 'n/a'
     else:
         tstat = '%-.5E' %  ( equation.tstat_beta_weighted[i])
 
-    if equation.pstat_beta_weighted == None:
+    if equation.pstat_beta_weighted is None:
         pstat = 'n/a'
     else:
         pstat = '%-.5E' %  ( equation.pstat_beta_weighted[i])
 
-    if equation.sd_beta_weighted != None:
-        print("Coefficient %s = %-.16E, std error (weighted): %-.5E" % (equation.GetCoefficientDesignators()[i], equation.solvedCoefficients[i], equation.sd_beta_weighted[i]))
-    else:
+    if equation.sd_beta_weighted is None:
         print("Coefficient %s = %-.16E, std error (weighted): n/a" % (equation.GetCoefficientDesignators()[i], equation.solvedCoefficients[i]))
+    else:
+        print("Coefficient %s = %-.16E, std error (weighted): %-.5E" % (equation.GetCoefficientDesignators()[i], equation.solvedCoefficients[i], equation.sd_beta_weighted[i]))
     print("          t-stat (weighted): %s, p-stat (weighted): %s, 95 percent confidence intervals (weighted): [%-.5E, %-.5E]" % (tstat,  pstat, equation.ci_weighted[i][0], equation.ci_weighted[i][1]))
 
 

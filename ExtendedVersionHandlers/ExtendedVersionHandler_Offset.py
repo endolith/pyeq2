@@ -19,11 +19,11 @@ from . import IExtendedVersionHandler
 class ExtendedVersionHandler_Offset(IExtendedVersionHandler.IExtendedVersionHandler):
     
     def AssembleDisplayHTML(self, inModel):
-        return inModel._HTML + " + Offset"
+        return f"{inModel._HTML} + Offset"
 
 
     def AssembleDisplayName(self, inModel):
-        return inModel._baseName + " With Offset"
+        return f"{inModel._baseName} With Offset"
 
 
     def AssembleSourceCodeName(self, inModel):
